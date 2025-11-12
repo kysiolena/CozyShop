@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from django.http import HttpRequest, HttpResponse
 
-# Create your views here.
+
+def catalog_page(request: HttpRequest) -> HttpResponse:
+    return HttpResponse('<html><body><h1>Catalog Page</h1></body></html>')
+
+
+def product_page(request: HttpRequest) -> HttpResponse:
+    return HttpResponse('<html><body><h1>Product Page</h1></body></html>')
