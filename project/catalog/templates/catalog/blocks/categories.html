@@ -1,0 +1,9 @@
+<ul class="nav flex-column sticky-top">
+    {% for category in categories %}
+    <li class="nav-item">
+        <!-- active aria-current="page" -->
+        <a class="nav-link {% if category.slug == slug %} active {% endif %}"
+           href="{% url 'category_page' slug=category.slug %}">{{ category.name }}</a>
+    </li>
+    {% endfor %}
+</ul>
