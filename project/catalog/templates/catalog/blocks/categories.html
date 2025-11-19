@@ -1,9 +1,14 @@
-<ul class="nav flex-column sticky-top">
-    {% for category in categories %}
-    <li class="nav-item">
-        <!-- active aria-current="page" -->
-        <a class="nav-link {% if category.slug == slug %} active {% endif %}"
-           href="{% url 'category_page' slug=category.slug %}">{{ category.name }}</a>
-    </li>
+<ul class="nav nav-pills flex-column sticky-top" style="top: 56px">
+    {% for cat in categories %}
+        <li class="nav-item">
+            <a class="nav-link {% if cat.slug == category.slug %} active {% endif %}"
+                    {% if cat.slug == category.slug %} aria-current="page" {% endif %}
+               href="{% url 'category_page' slug=cat.slug %}"
+            >
+                {{ cat.name }}
+            </a>
+        </li>
     {% endfor %}
+
+
 </ul>

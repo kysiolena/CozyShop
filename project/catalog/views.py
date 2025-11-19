@@ -26,7 +26,19 @@ def category_page(request: HttpRequest, slug) -> HttpResponse:
     categories = [c for c in CATEGORIES if c["slug"] == slug]
     category = categories[0]
 
-    context = {"page_name": category["name"], "category": categories[0]}
+    chunk_size = 3
+    category_products = [p for p in PRODUCTS if p["category_id"] == category["id"]]
+    rows = [
+        category_products[i : i + chunk_size]
+        for i in range(0, len(category_products), chunk_size)
+    ]
+
+    context = {
+        "page_name": category["name"],
+        "category": categories[0],
+        "rows": rows,
+        "categories": CATEGORIES,
+    }
     return render(
         request=request, template_name="catalog/category.html", context=context
     )
