@@ -1,5 +1,7 @@
 {% extends "./layout/base.html" %}
 
+{% load filters %}
+
 {% block main %}
 <div class="row pt-4">
 
@@ -32,7 +34,7 @@
                             Price:
                             {% if product.sale %}
                             <del class="fs-6">${{ product.price }}</del>
-                            <ins class="fs-4">${{ product.price }} - {{product.sale}}</ins>
+                            <ins class="fs-4">${{ product.price|sale_price:product.sale }}</ins>
                             {% else %}
                             <span class="fs-4">${{ product.price }}</span>
                             {% endif %}
