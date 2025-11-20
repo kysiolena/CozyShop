@@ -6,7 +6,7 @@ class Product(models.Model):
     slug = models.SlugField(max_length=100, unique=True)
     image = models.ImageField(upload_to="products/", null=True, blank=True)
     price = models.FloatField()
-    sale = models.DecimalField(default=0, decimal_places=2, max_digits=3)
+    sale = models.FloatField(default=0, help_text="The value must be between 0 and 1")
     in_stock = models.BooleanField(null=True)
     description = models.TextField(null=True, blank=True)
 
