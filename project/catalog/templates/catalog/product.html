@@ -40,6 +40,11 @@
                                 </a> |
                             {% endfor %}
                         </li>
+                        {% if product.description %}
+                            <li class="list-group-item">
+                                Description: {{ product.description }}
+                            </li>
+                        {% endif %}
                     </ul>
 
                 </div>
