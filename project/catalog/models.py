@@ -2,6 +2,16 @@ from django.conf import settings
 from django.db import models
 
 
+class TimeStampedModel(models.Model):
+    """Abstract base class that adds created_at and updated_at fields to models."""
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
 class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
@@ -30,7 +40,7 @@ class Product(models.Model):
             return f"{settings.STATIC_URL}catalog/images/image-not-found.png"
 
 
-class ProductReview(models.Model):
+class ProductReview(TimeStampedModel):
     name = models.CharField(max_length=100)
     text = models.TextField()
     image = models.ImageField(upload_to="reviews/", null=True, blank=True)
