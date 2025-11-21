@@ -28,3 +28,13 @@ class Product(models.Model):
             return self.image if str(self.image).startswith("http") else self.image.url
         else:
             return f"{settings.STATIC_URL}catalog/images/image-not-found.png"
+
+
+class ProductReview(models.Model):
+    name = models.CharField(max_length=100)
+    text = models.TextField()
+    image = models.ImageField(upload_to="reviews/", null=True, blank=True)
+
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="reviews"
+    )
