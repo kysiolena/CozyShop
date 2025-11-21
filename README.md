@@ -19,3 +19,9 @@
 ```terminaloutput
     py manage.py seeds
 ```
+
+4. Create Super User
+
+```terminaloutput
+    py manage.py createsuperuser
+```
