@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -9,6 +10,13 @@ class Product(models.Model):
     sale = models.FloatField(default=0, help_text="The value must be between 0 and 1")
     in_stock = models.BooleanField(null=True)
     description = models.TextField(null=True, blank=True)
+
+    @property
+    def img(self):
+        if self.image and self.image.url:
+            return self.image if str(self.image).startswith("http") else self.image.url
+        else:
+            return f"{settings.STATIC_URL}catalog/images/image-not-found.png"
 
 
 class Category(models.Model):
