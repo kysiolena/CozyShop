@@ -48,7 +48,7 @@ class Command(BaseCommand):
 
     def bulk_insert_category_product(self, cur: cursor) -> None:
         sql = (
-            "INSERT INTO catalog_category_products (category_id, product_id) VALUES %s"
+            "INSERT INTO catalog_product_categories (category_id, product_id) VALUES %s"
         )
         data = [
             (

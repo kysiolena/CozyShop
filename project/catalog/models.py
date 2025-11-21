@@ -1,4 +1,12 @@
+from django.conf import settings
 from django.db import models
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True)
+    image = models.ImageField(upload_to="categories/", null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
 
 
 class Product(models.Model):
@@ -9,12 +17,14 @@ class Product(models.Model):
     sale = models.FloatField(default=0, help_text="The value must be between 0 and 1")
     in_stock = models.BooleanField(null=True)
     description = models.TextField(null=True, blank=True)
-
-
-class Category(models.Model):
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True)
-    products = models.ManyToManyField(
-        Product,
-        related_name="categories",
+    categories = models.ManyToManyField(
+        Category,
+        related_name="products",
     )
+
+    @property
+    def img(self):
+        if self.image and self.image.url:
+            return self.image if str(self.image).startswith("http") else self.image.url
+        else:
+            return f"{settings.STATIC_URL}catalog/images/image-not-found.png"
