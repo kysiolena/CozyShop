@@ -131,11 +131,12 @@ class ProductReviewView(TemplateView):
         if form.is_valid():
             form.save(product_slug)
             context["form"] = ProductReviewForm()
+            context["message"] = "Your review was successfully created!"
         else:
             context["form"] = form
 
         context["page_name"] = f"Review for «{product.name}»"
-        context["product_slug"] = product.slug
+        context["product_slug"] = product_slug
         context["review"] = product_review
 
         return self.render_to_response(context)

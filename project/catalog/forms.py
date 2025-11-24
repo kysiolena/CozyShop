@@ -4,9 +4,11 @@ from .models import ProductReview, Product
 
 
 class ProductReviewForm(forms.Form):
-    name = forms.CharField()
-    text = forms.CharField(widget=forms.Textarea)
-    image = forms.ImageField()
+    name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control mt-2"}))
+    text = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control mt-2"}))
+    image = forms.ImageField(
+        widget=forms.FileInput(attrs={"class": "form-control mt-2"})
+    )
 
     def save(self, product_slug: str):
         data = self.cleaned_data

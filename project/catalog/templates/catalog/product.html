@@ -33,7 +33,7 @@
                         <li class="list-group-item">
                             Categories: |
                             {% for category in categories %}
-                                <a class="badge text-bg-info"
+                                <a class="badge text-bg-info text-decoration-none"
                                    href="{% url 'category_page' slug=category.slug %}"
                                 >
                                     {{ category.name }}
@@ -45,7 +45,6 @@
 
                 </div>
             </div>
-
         </div>
     </div>
     <div class="row mt-4">
