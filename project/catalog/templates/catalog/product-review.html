@@ -1,0 +1,18 @@
+{% extends "./layout/base.html" %}
+
+{% block main %}
+    <div class="row pt-4">
+        <div class="col-3"></div>
+        <div class="col-6">
+            <form action="{% url 'product_review_create_page' slug=product_slug %}" method="post"
+                  enctype="multipart/form-data">
+                {{ form }}
+                {% csrf_token %}
+
+                <button class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+        <div class="col-3"></div>
+    </div>
+
+{% endblock %}

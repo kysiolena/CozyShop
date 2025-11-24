@@ -48,3 +48,10 @@ class ProductReview(TimeStampedModel):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="reviews"
     )
+
+    @property
+    def img(self):
+        if self.image:
+            return self.image.url
+        else:
+            return None
