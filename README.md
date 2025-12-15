@@ -25,3 +25,20 @@
 ```terminaloutput
     py manage.py createsuperuser
 ```
+
+## Checklist 
+1. [ ] Create DB Schema (https://www.figma.com/community/file/1077327065994144868/database-diagram-builder)[DB Diagram Builder]
+2. [x] Add all Product Page
+3. [x] Add detail Product Page
+4. [x] Add Filter by Category of Product
+5. [ ] Add Search by Name or Description of Product
+6. [ ] Add Authorization (forms, views, templates, email verification)
+7. [ ] Add Profile (model, form, views, templates)
+8. [ ] Add Cart functionality 
+9. [ ] Add Order (model, form, views, templates)
+10. [ ] Add Payment logic (PayPal sandbox)
+11. [ ] Add Comment (model, form, view, template)
+12. [ ] Add Subscription (Celery)
+13. [ ] Add InfoTable (WebSocket)
+14. [ ] Add Favorite
+15. [ ] Tests
