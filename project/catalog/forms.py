@@ -5,7 +5,9 @@ from .models import ProductReview, Product
 
 class ProductReviewForm(forms.Form):
     name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control mt-2"}))
-    text = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control mt-2"}))
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={"class": "form-control mt-2"})
+    )
     image = forms.ImageField(
         widget=forms.FileInput(attrs={"class": "form-control mt-2"})
     )
@@ -15,7 +17,7 @@ class ProductReviewForm(forms.Form):
 
         product_review = ProductReview(
             name=data["name"],
-            text=data["text"],
+            description=data["description"],
             image=data["image"],
             product=Product.objects.get(slug=product_slug),
         )
