@@ -1,11 +1,7 @@
-import os
-
-import psycopg2
 from django.core.management.base import BaseCommand
-from psycopg2._psycopg import cursor
-from psycopg2.extras import execute_values
 
 from ._seeds_data import CATEGORIES, PRODUCTS
+from ...models import Category, Product
 
 
 # Command
@@ -21,59 +17,52 @@ class Command(BaseCommand):
 
     # Helper functions
     @staticmethod
-    def bulk_insert(cur: cursor, sql: str, data: list[tuple]) -> None:
-        execute_values(cur, sql, data)
-
-    def bulk_insert_categories(self, cur: cursor) -> None:
-        sql = "INSERT INTO catalog_category (name, slug) VALUES %s"
-        data = [(c["name"], c["slug"]) for c in CATEGORIES]
-
-        self.bulk_insert(cur, sql, data)
-
-    def bulk_insert_products(self, cur: cursor) -> None:
-        sql = "INSERT INTO catalog_product (name, slug, image, price, sale, in_stock) VALUES %s"
-        data = [
-            (
-                c["name"],
-                c["slug"],
-                c["image"],
-                c["price"],
-                c["sale"],
-                c["in_stock"],
+    def bulk_insert_categories() -> None:
+        categories = [
+            Category(
+                **{
+                    "name": c["name"],
+                    "slug": c["slug"],
+                }
             )
-            for c in PRODUCTS
+            for c in CATEGORIES
         ]
+        Category.objects.bulk_create(categories)
 
-        self.bulk_insert(cur, sql, data)
-
-    def bulk_insert_category_product(self, cur: cursor) -> None:
-        sql = (
-            "INSERT INTO catalog_product_categories (category_id, product_id) VALUES %s"
-        )
-        data = [
-            (
-                c["category_id"],
-                c["id"],
+    @staticmethod
+    def bulk_insert_products() -> None:
+        products = [
+            Product(
+                **{
+                    "name": p["name"],
+                    "slug": p["slug"],
+                    "price": p["price"],
+                    "sale": p["sale"],
+                    "in_stock": p["in_stock"],
+                    "image": p["image"],
+                }
             )
-            for c in PRODUCTS
+            for p in PRODUCTS
         ]
+        Product.objects.bulk_create(products)
 
-        self.bulk_insert(cur, sql, data)
+    @staticmethod
+    def bulk_insert_category_product() -> None:
+        categories_products = [
+            Product.categories.through(
+                product_id=p.id,
+                category_id=[
+                    p_fake["category_id"] for p_fake in PRODUCTS if p_fake["id"] == p.id
+                ][0],
+            )
+            for p in Product.objects.all()
+        ]
+        Product.categories.through.objects.bulk_create(categories_products)
 
     def seed_db(self):
         try:
-            with psycopg2.connect(
-                dbname=os.getenv("DB_NAME"),
-                user=os.getenv("DB_USER"),
-                password=os.getenv("DB_PASSWORD"),
-                host=os.getenv("DB_HOST"),
-                port=os.getenv("DB_PORT"),
-            ) as conn:
-                with conn.cursor() as curs:
-                    self.bulk_insert_categories(curs)
-                    self.bulk_insert_products(curs)
-                    self.bulk_insert_category_product(curs)
-
-                conn.commit()
-        except psycopg2.Error as e:
+            self.bulk_insert_categories()
+            self.bulk_insert_products()
+            self.bulk_insert_category_product()
+        except Exception as e:
             print(f"Error during bulk insert: {e}")
