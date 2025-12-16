@@ -29,8 +29,7 @@
 
 ## Checklist
 
-1. [ ] Create DB
-   Schema ([DB Diagram Builder](https://www.figma.com/community/file/1077327065994144868/database-diagram-builder))
+1. [x] Create DB Schema ([Miro](https://miro.com/app/board/uXjVGa445i4=/?share_link_id=843826101249))
 2. [x] Add all Product Page
 3. [x] Add detail Product Page
 4. [x] Add Filter by Category of Product
