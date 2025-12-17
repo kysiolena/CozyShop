@@ -39,6 +39,13 @@ class Product(TimeStampedModel):
         else:
             return f"{settings.STATIC_URL}catalog/images/image-not-found.png"
 
+    @property
+    def sale_price(self):
+        if self.sale:
+            return round(self.price - (self.price * self.sale), 2)
+        else:
+            return None
+
 
 class ProductReview(TimeStampedModel):
     name = models.CharField(max_length=100)
