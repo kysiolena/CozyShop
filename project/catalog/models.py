@@ -18,6 +18,9 @@ class Category(TimeStampedModel):
     image = models.ImageField(upload_to="categories/", null=True, blank=True)
     description = models.TextField(max_length=500, null=True, blank=True)
 
+    def __str__(self):
+        return self.name
+
     @property
     def img(self):
         if self.image:
@@ -38,6 +41,9 @@ class Product(TimeStampedModel):
         Category,
         related_name="products",
     )
+
+    def __str__(self):
+        return self.name
 
     @property
     def img(self):
@@ -62,6 +68,9 @@ class ProductReview(TimeStampedModel):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="reviews"
     )
+
+    def __str__(self):
+        return f"{self.id} - {self.product.name}"
 
     @property
     def img(self):
