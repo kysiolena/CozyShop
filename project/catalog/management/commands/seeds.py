@@ -1,6 +1,9 @@
+import random
+
+from django.core.management.base import BaseCommand
+
 from catalog.management.commands._seeds_data import CATEGORIES, PRODUCTS
 from catalog.models import Category, Product
-from django.core.management.base import BaseCommand
 
 
 # Command
@@ -22,10 +25,13 @@ class Command(BaseCommand):
                 **{
                     "name": c["name"],
                     "slug": c["slug"],
+                    "image": c["image"] if random.randint(0, 1) else None,
+                    "description": c["description"] if random.randint(0, 1) else None,
                 }
             )
-            for c in CATEGORIES
+            for index, c in enumerate(CATEGORIES)
         ]
+
         Category.objects.bulk_create(categories)
 
     @staticmethod
