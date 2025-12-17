@@ -1,9 +1,8 @@
+from catalog.forms import ProductReviewForm
+from catalog.models import Product, Category, ProductReview
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
 from django.views.generic import TemplateView
-
-from .forms import ProductReviewForm
-from .models import Product, Category, ProductReview
 
 
 class ProductMixin:

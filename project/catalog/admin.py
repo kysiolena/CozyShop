@@ -1,6 +1,5 @@
+from catalog.models import Product, Category, ProductReview
 from django.contrib import admin
-
-from .models import Product, Category, ProductReview
 
 # Register your models here.
 admin.site.register(Category)

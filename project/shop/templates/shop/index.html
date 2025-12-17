@@ -1,0 +1,14 @@
+{% extends "./layout/base.html" %}
+
+{% block main %}
+    <div class="row pt-4">
+        <h1 class="mb-4">Shop Home Page! 🤩</h1>
+
+        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+            <a href="{% url 'catalog_page' %}" class="btn btn-danger">Catalog</a>
+            <a href="{% url 'category_page' slug='warm-lighting' %}" class="btn btn-warning">Category</a>
+            <a href="{% url 'product_page' slug='touch-night-light' %}" class="btn btn-success">Product</a>
+        </div>
+    </div>
+
+{% endblock %}

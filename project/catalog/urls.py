@@ -1,6 +1,10 @@
+from catalog.views import (
+    CatalogView,
+    CategoryView,
+    ProductView,
+    ProductReviewView,
+)
 from django.urls import path
-
-from .views import CatalogView, CategoryView, ProductView, ProductReviewView
 
 urlpatterns = [
     path("", CatalogView.as_view(), name="catalog_page"),

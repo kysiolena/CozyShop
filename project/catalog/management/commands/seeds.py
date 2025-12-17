@@ -1,7 +1,6 @@
+from catalog.management.commands._seeds_data import CATEGORIES, PRODUCTS
+from catalog.models import Category, Product
 from django.core.management.base import BaseCommand
-
-from ._seeds_data import CATEGORIES, PRODUCTS
-from ...models import Category, Product
 
 
 # Command
