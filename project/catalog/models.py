@@ -18,6 +18,13 @@ class Category(TimeStampedModel):
     image = models.ImageField(upload_to="categories/", null=True, blank=True)
     description = models.TextField(max_length=500, null=True, blank=True)
 
+    @property
+    def img(self):
+        if self.image:
+            return self.image.url
+        else:
+            return None
+
 
 class Product(TimeStampedModel):
     name = models.CharField(max_length=100)

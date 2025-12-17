@@ -7,6 +7,25 @@
             {% include "./blocks/categories.html" %}
         </div>
         <div class="col-9">
+            {% if category.img %}
+                <div class="row mb-4">
+                    <div class="col-12 h-100">
+                        <img src="{{ category.img }}" class="img-fluid" alt="{{ category.name }}"
+                             style="height: 200px; width: 100%; object-position: center; object-fit: cover;">
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if category.description %}
+                <div class="row mb-4">
+                    <div class="col-2"></div>
+                    <p class="col-8 text-center">
+                        {{ category.description }}
+                    </p>
+                    <div class="col-2"></div>
+                </div>
+            {% endif %}
+
             {% include "./blocks/products-by-rows.html" %}
         </div>
     </div>
