@@ -1,8 +1,10 @@
-from catalog.forms import ProductReviewForm
-from catalog.models import Product, Category, ProductReview
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
 from django.views.generic import TemplateView
+
+from catalog.forms import ProductReviewForm
+from catalog.models import Product, Category, ProductReview
+from shop.views import BaseContextMixin
 
 
 class ProductMixin:
@@ -18,12 +20,11 @@ class ProductMixin:
         return rows
 
 
-class CatalogView(TemplateView, ProductMixin):
+class CatalogView(BaseContextMixin, ProductMixin, TemplateView):
     template_name = "catalog/index.html"
+    page_name = "Catalog"
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
         # Products
         products_set = Product.objects.all()
         # Products by rows
@@ -32,23 +33,24 @@ class CatalogView(TemplateView, ProductMixin):
         # Categories
         categories_set = Category.objects.all()
 
-        context["page_name"] = "Catalog"
+        context = super().get_context_data(**kwargs)
+
         context["rows"] = rows
         context["categories"] = categories_set
 
         return context
 
 
-class CategoryView(TemplateView, ProductMixin):
+class CategoryView(BaseContextMixin, ProductMixin, TemplateView):
     template_name = "catalog/category.html"
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
         slug = self.kwargs.get("slug")
 
         # Category
         category = Category.objects.get(slug=slug)
+
+        self.page_name = category.name
 
         # Products by rows
         rows = self.get_products_rows(category.products.all())
@@ -56,7 +58,8 @@ class CategoryView(TemplateView, ProductMixin):
         # Categories
         categories_set = Category.objects.all()
 
-        context["page_name"] = category.name
+        context = super().get_context_data(**kwargs)
+
         context["category"] = category
         context["rows"] = rows
         context["categories"] = categories_set
@@ -64,16 +67,16 @@ class CategoryView(TemplateView, ProductMixin):
         return context
 
 
-class ProductView(TemplateView):
+class ProductView(BaseContextMixin, TemplateView):
     template_name = "catalog/product.html"
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
         slug = self.kwargs.get("slug")
 
         # Product
         product = Product.objects.get(slug=slug)
+
+        self.page_name = product.name
 
         # Product Categories
         categories_set = product.categories.all()
@@ -81,7 +84,8 @@ class ProductView(TemplateView):
         # Product Reviews
         reviews_set = product.reviews.all()
 
-        context["page_name"] = product.name
+        context = super().get_context_data(**kwargs)
+
         context["product"] = product
         context["categories"] = categories_set
         context["reviews"] = reviews_set
@@ -89,24 +93,25 @@ class ProductView(TemplateView):
         return context
 
 
-class ProductReviewView(TemplateView):
+class ProductReviewView(BaseContextMixin, TemplateView):
     template_name = "catalog/product-review.html"
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
         product_slug = self.kwargs.get("slug")
         review_id = self.kwargs.get("review_id")
 
         # Product
         product = Product.objects.get(slug=product_slug)
 
+        self.page_name = f"Review for «{product.name}»"
+
         # Product Review
         product_review = ProductReview.objects.get(id=review_id) if review_id else None
 
         form = ProductReviewForm(product_review)
 
-        context["page_name"] = f"Review for «{product.name}»"
+        context = super().get_context_data(**kwargs)
+
         context["product_slug"] = product.slug
         context["review"] = product_review
         context["form"] = form
@@ -114,18 +119,20 @@ class ProductReviewView(TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        context = super().get_context_data(**kwargs)
-
         product_slug = self.kwargs.get("slug")
         review_id = self.kwargs.get("review_id")
 
         # Product
         product = Product.objects.get(slug=product_slug)
 
+        self.page_name = f"Review for «{product.name}»"
+
         # Product Review
         product_review = ProductReview.objects.get(id=review_id) if review_id else None
 
         form = ProductReviewForm(request.POST or None, request.FILES or None)
+
+        context = super().get_context_data(**kwargs)
 
         if form.is_valid():
             form.save(product_slug)
@@ -134,7 +141,6 @@ class ProductReviewView(TemplateView):
         else:
             context["form"] = form
 
-        context["page_name"] = f"Review for «{product.name}»"
         context["product_slug"] = product_slug
         context["review"] = product_review
 
