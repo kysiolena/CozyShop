@@ -1,8 +1,7 @@
-{% extends "shop/layout/base.html" %}
+{% extends "authapp/layout/form.html" %}
 
-{% block main %}
-    <div class="row pt-4">
-        <h1>Sign In</h1>
-    </div>
+{% block form %}
+    
+    {% include 'authapp/blocks/form.html' with action='sign_in_page' button='Login' %}
 
 {% endblock %}
