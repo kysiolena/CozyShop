@@ -2,5 +2,7 @@ black==25.12.0
 pillow==12.0.0
 psycopg==3.3.2
 Django==6.0
+django-css-inline==0.0.6
+
 
 
