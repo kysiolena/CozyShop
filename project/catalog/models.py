@@ -23,8 +23,8 @@ class Category(TimeStampedModel):
 
     @property
     def img(self):
-        if self.image:
-            return self.image.url
+        if self.image and self.image.url:
+            return self.image if str(self.image).startswith("http") else self.image.url
         else:
             return None
 

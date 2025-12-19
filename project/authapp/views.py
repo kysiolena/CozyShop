@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import views as auth_views, get_user_model
+from django.contrib.auth import views as auth_views, get_user_model, login
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -58,6 +58,19 @@ class SignUpView(RedirectAuthenticatedUserMixin, BaseContextMixin, CreateView):
     page_name = "Sign Up"
     form_class = SignUpForm
     success_url = reverse_lazy("profile_page")
+
+    def form_valid(self, form):
+        # Save the user
+        user = form.save()
+
+        # Log the user in immediately after signup
+        login(self.request, user)
+
+        messages.success(
+            self.request, "Registration successful! You are now logged in."
+        )
+
+        return redirect(self.success_url)
 
 
 class SignOutView(RedirectNoAuthenticatedUserMixin, auth_views.LogoutView):
