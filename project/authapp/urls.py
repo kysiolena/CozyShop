@@ -6,6 +6,7 @@ from authapp.views import (
     SignOutView,
     SignUpView,
     SignInView,
+    ActivateAccountView,
 )
 
 urlpatterns = [
@@ -14,4 +15,9 @@ urlpatterns = [
     path("sign-out/", SignOutView.as_view(), name="sign_out_page"),
     path("profile/", ProfileUpdateView.as_view(), name="profile_page"),
     path("update-password/", UpdatePasswordView.as_view(), name="update_password_page"),
+    path(
+        "activate/<uidb64>/<token>/",
+        ActivateAccountView.as_view(),
+        name="activate_page",
+    ),
 ]

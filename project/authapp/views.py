@@ -1,8 +1,16 @@
+from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import views as auth_views, get_user_model, login
+from django.contrib.auth import views as auth_views, get_user_model
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import send_mail
 from django.shortcuts import redirect
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.views import View
 from django.views.generic.edit import CreateView, UpdateView
 
 from authapp.forms import SignUpForm, SignInForm, ProfileUpdateForm, PasswordChangeForm
@@ -57,20 +65,65 @@ class SignUpView(RedirectAuthenticatedUserMixin, BaseContextMixin, CreateView):
     template_name = "authapp/sign-up.html"
     page_name = "Sign Up"
     form_class = SignUpForm
-    success_url = reverse_lazy("profile_page")
+    success_url = reverse_lazy("shop_page")
 
     def form_valid(self, form):
-        # Save the user
-        user = form.save()
+        # 1. Save user as inactive
+        user = form.save(commit=False)
+        user.is_active = False
+        user.save()
 
-        # Log the user in immediately after signup
-        login(self.request, user)
+        # Create User email confirmation
+        current_site = get_current_site(self.request)
+        email_subject = "Activate Your Account"
 
-        messages.success(
-            self.request, "Registration successful! You are now logged in."
+        message = render_to_string(
+            template_name="authapp/emails/activate-account.html",
+            context={
+                "user": user,
+                "domain": current_site.domain,
+                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                "token": default_token_generator.make_token(user),
+            },
+        )
+
+        # 3. Send email via Mailtrap
+        send_mail(
+            subject=email_subject,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+        )
+
+        messages.info(
+            self.request,
+            "We have sent you an email, please confirm your email address to complete registration.",
         )
 
         return redirect(self.success_url)
+
+
+class ActivateAccountView(View):
+    def get(self, request, uidb64, token):
+        try:
+            uid = force_bytes(urlsafe_base64_decode(uidb64))
+            user = UserModel.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
+            user = None
+
+        if user is not None and default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+
+            messages.success(
+                request, "Your email has been confirmed! You can now log in."
+            )
+
+            return redirect("sign_in_page")
+        else:
+            messages.error(request, "Activation link is invalid or has expired.")
+
+            return redirect("shop_page")
 
 
 class SignOutView(RedirectNoAuthenticatedUserMixin, auth_views.LogoutView):
