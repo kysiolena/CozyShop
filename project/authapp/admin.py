@@ -6,9 +6,7 @@ UserModel = get_user_model()
 
 
 class CustomUserAdmin(UserAdmin):
-    # Add email to the list of fields to display and use in forms
-    list_display = ("email", "first_name", "last_name", "is_staff")
-    # ... other configurations for fieldsets, etc.
+    list_display = ("email", "username", "first_name", "last_name", "is_staff")
 
 
 admin.site.register(UserModel, CustomUserAdmin)

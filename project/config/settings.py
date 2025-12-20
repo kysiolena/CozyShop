@@ -26,7 +26,7 @@ def str_to_int(value) -> int | None:
     """
     Convert string to integer.
     """
-    return int(value) if value.isdigit() else None
+    return int(value) if (value or "").isdigit() else None
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

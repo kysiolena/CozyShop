@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import views as auth_views, get_user_model
@@ -15,6 +17,9 @@ from django.views.generic.edit import CreateView, UpdateView
 
 from authapp.forms import SignUpForm, SignInForm, ProfileUpdateForm, PasswordChangeForm
 from shop.views import BaseContextMixin
+
+# Logger
+logger = logging.getLogger(__name__)
 
 # Get User Current Model
 UserModel = get_user_model()
@@ -55,13 +60,30 @@ class RedirectNoAuthenticatedUserMixin:
 class SignInView(
     RedirectAuthenticatedUserMixin, BaseContextMixin, auth_views.LoginView
 ):
+    """View for sign in with success message."""
+
     template_name = "authapp/sign-in.html"
     page_name = "Sign In"
     form_class = SignInForm
-    next_page = "profile_page"
+    next_page = "shop_page"
+
+    def form_valid(self, form):
+        """Add a success message upon successful login."""
+        # The form has already authenticated the user at this point.
+        # We get the user instance directly from the form.
+        user = form.get_user()
+        username = user.username
+
+        messages.success(
+            self.request, f"Welcome back{", " if username else ""}{username or ""}! 👋"
+        )
+
+        return super().form_valid(form)
 
 
 class SignUpView(RedirectAuthenticatedUserMixin, BaseContextMixin, CreateView):
+    """View for add email confirmation after successful sign up."""
+
     template_name = "authapp/sign-up.html"
     page_name = "Sign Up"
     form_class = SignUpForm
@@ -87,23 +109,38 @@ class SignUpView(RedirectAuthenticatedUserMixin, BaseContextMixin, CreateView):
             },
         )
 
-        # 3. Send email via Mailtrap
-        send_mail(
-            subject=email_subject,
-            message=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
-        )
+        try:
 
-        messages.info(
-            self.request,
-            "We have sent you an email, please confirm your email address to complete registration.",
-        )
+            # 3. Send email via Mailtrap
+            send_mail(
+                subject=email_subject,
+                message="",
+                html_message=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
 
-        return redirect(self.success_url)
+            messages.info(
+                self.request,
+                "We have sent you an email, please confirm your email address to complete registration.",
+            )
+
+            return redirect(self.success_url)
+        except Exception as e:
+            logger.error(f"Failed to send HTML email: {e}")
+
+            messages.error(
+                self.request,
+                "We are unable to send you a confirmation email, please contact our support team.",
+            )
+
+            return redirect("shop_page")
 
 
 class ActivateAccountView(View):
+    """View for check User activation token and complete registration."""
+
     def get(self, request, uidb64, token):
         try:
             uid = force_bytes(urlsafe_base64_decode(uidb64))
@@ -127,6 +164,8 @@ class ActivateAccountView(View):
 
 
 class SignOutView(RedirectNoAuthenticatedUserMixin, auth_views.LogoutView):
+    """View for log user out with displaying information message."""
+
     next_page = "sign_in_page"
 
     def get_success_url(self):
@@ -149,6 +188,8 @@ class UpdatePasswordView(
     BaseContextMixin,
     auth_views.PasswordChangeView,
 ):
+    """View for password change."""
+
     template_name = "authapp/update-password.html"
     page_name = "Update Password"
     success_url = reverse_lazy("profile_page")
@@ -157,6 +198,8 @@ class UpdatePasswordView(
 
 
 class ProfileUpdateView(RedirectNoAuthenticatedUserMixin, BaseContextMixin, UpdateView):
+    """View for update base user profile information."""
+
     template_name = "authapp/profile.html"
     page_name = "Profile"
     form_class = ProfileUpdateForm

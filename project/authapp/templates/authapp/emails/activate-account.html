@@ -18,13 +18,7 @@
 <body>
 <div class="">
     <h1 class="mb-4">
-        Hi
-        {% if user.first_name %}
-            {{ user.first_name }}
-        {% elif user.username %}
-            {{ user.username }}
-        {% endif %}
-        !
+        Hi{% if user.username %}, {{ user.username }}{% endif %}! 👋
     </h1>
 
     <p class="mb-2">Please click on the link below to confirm your registration:</p>
@@ -33,6 +27,10 @@
     >
         Confirm Email
     </a>
+    <p class="mt-2">
+        Or do nothing if you haven't previously completed the registration form on the
+        <a href="http://{{ domain }}{% url 'shop_page' %}">Cozy Shop</a> website.
+    </p>
 </div>
 </body>
 </html>

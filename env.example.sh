@@ -14,8 +14,9 @@ export DEBUG="True"
 export ALLOWED_HOSTS="[]"
 
 # Email settings
+#export EMAIL_BACKEND="django.core.mail.backends.console.EmailBackend"
 export EMAIL_BACKEND=""
-export EMAIL_USE_TLS="True"
+export EMAIL_USE_TLS="False"
 export EMAIL_USE_SSL="False"
 export DEFAULT_FROM_EMAIL=""
 export EMAIL_HOST=""
