@@ -15,7 +15,14 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
 from django.views.generic.edit import CreateView, UpdateView
 
-from authapp.forms import SignUpForm, SignInForm, ProfileUpdateForm, PasswordChangeForm
+from authapp.forms import (
+    SignUpForm,
+    SignInForm,
+    ProfileUpdateForm,
+    PasswordChangeForm,
+    PasswordResetConfirmForm,
+    PasswordResetForm,
+)
 from shop.views import BaseContextMixin
 
 # Logger
@@ -138,7 +145,7 @@ class SignUpView(RedirectAuthenticatedUserMixin, BaseContextMixin, CreateView):
             return redirect("shop_page")
 
 
-class ActivateAccountView(View):
+class ActivateAccountView(RedirectAuthenticatedUserMixin, View):
     """View for check User activation token and complete registration."""
 
     def get(self, request, uidb64, token):
@@ -182,21 +189,6 @@ class SignOutView(RedirectNoAuthenticatedUserMixin, auth_views.LogoutView):
         return reverse_lazy("shop_page")
 
 
-class UpdatePasswordView(
-    SuccessMessageMixin,
-    RedirectNoAuthenticatedUserMixin,
-    BaseContextMixin,
-    auth_views.PasswordChangeView,
-):
-    """View for password change."""
-
-    template_name = "authapp/update-password.html"
-    page_name = "Update Password"
-    success_url = reverse_lazy("profile_page")
-    success_message = "Your password was changed successfully!"
-    form_class = PasswordChangeForm
-
-
 class ProfileUpdateView(RedirectNoAuthenticatedUserMixin, BaseContextMixin, UpdateView):
     """View for update base user profile information."""
 
@@ -213,3 +205,62 @@ class ProfileUpdateView(RedirectNoAuthenticatedUserMixin, BaseContextMixin, Upda
 
         # Ensure the user is logged in to access their own profile
         return self.request.user
+
+
+class UpdatePasswordView(
+    RedirectNoAuthenticatedUserMixin,
+    BaseContextMixin,
+    SuccessMessageMixin,
+    auth_views.PasswordChangeView,
+):
+    """View for password change."""
+
+    template_name = "authapp/update-password.html"
+    page_name = "Update Password"
+    success_url = reverse_lazy("profile_page")
+    success_message = "Your password was changed successfully!"
+    form_class = PasswordChangeForm
+
+
+class ResetPasswordView(
+    RedirectAuthenticatedUserMixin, BaseContextMixin, auth_views.PasswordResetView
+):
+    """View for password reset."""
+
+    page_name = "Reset Password"
+    template_name = "authapp/reset-password.html"
+    success_url = reverse_lazy("shop_page")
+    form_class = PasswordResetForm
+    email_template_name = "authapp/emails/reset-password.html"
+    html_email_template_name = "authapp/emails/reset-password.html"
+
+    def form_valid(self, form):
+        """Add success message before redirecting to shop page."""
+        messages.info(
+            self.request,
+            "Check your email. We've sent you a password reset link. You'll find it in your inbox.",
+        )
+
+        return super().form_valid(form)
+
+
+class ResetPasswordConfirmView(
+    RedirectAuthenticatedUserMixin,
+    BaseContextMixin,
+    auth_views.PasswordResetConfirmView,
+):
+    """View where the user enters a new password with a success message."""
+
+    template_name = "authapp/reset-password-confirm.html"
+    page_name = "Set New Password"
+    success_url = reverse_lazy("sign_in_page")
+    form_class = PasswordResetConfirmForm
+
+    def form_valid(self, form):
+        """Add success message before redirecting to sign in."""
+        messages.success(
+            self.request,
+            "Your password has been set! You may now log in with your new credentials.",
+        )
+
+        return super().form_valid(form)

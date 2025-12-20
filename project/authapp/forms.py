@@ -4,6 +4,8 @@ from django.contrib.auth.forms import (
     UserCreationForm,
     AuthenticationForm,
     UserChangeForm,
+    PasswordChangeForm as BasePasswordChangeForm,
+    PasswordResetForm as BasePasswordResetForm,
     SetPasswordForm,
 )
 
@@ -34,7 +36,30 @@ class BootstrapFieldsMixin:
                 field.widget.attrs.update({"class": " ".join(existing_classes)})
 
 
-class PasswordChangeForm(BootstrapFieldsMixin, SetPasswordForm):
+class PasswordResetConfirmForm(BootstrapFieldsMixin, SetPasswordForm):
+    class Meta:
+        model = UserModel
+        fields = ["new_password1", "new_password2"]
+
+
+class PasswordResetForm(BootstrapFieldsMixin, BasePasswordResetForm):
+    class Meta:
+        model = UserModel
+        fields = ["email"]
+
+    def clean_email(self):
+        """Raise ValidationError if user doesn't exist."""
+        email = self.cleaned_data.get("email")
+
+        # Check if any active user exists with this email
+        if not UserModel.objects.filter(email=email, is_active=True).exists():
+            raise forms.ValidationError(
+                "There is no active user registered with this email address."
+            )
+        return email
+
+
+class PasswordChangeForm(BootstrapFieldsMixin, BasePasswordChangeForm):
     class Meta:
         model = UserModel
         fields = ["new_password1", "new_password2"]

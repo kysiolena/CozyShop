@@ -1,7 +1,14 @@
 {% extends "authapp/layout/form.html" %}
 
 {% block form %}
-    
+
     {% include 'authapp/blocks/form.html' with action='sign_in_page' button='Login' %}
+
+    <div class="mt-4">
+        <p class="mb-0 text-muted">
+            Forgot your password?
+            <a href="{% url 'reset_password_page' %}" class="text-decoration-none">Reset Password</a>
+        </p>
+    </div>
 
 {% endblock %}
