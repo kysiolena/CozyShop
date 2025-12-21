@@ -6,17 +6,12 @@ const displayImagePreview = () => {
     const fieldPreviewContainers = document.querySelectorAll(".field-preview")
 
     fieldPreviewContainers.forEach((fieldPreviewContainer) => {
+        const img = fieldPreviewContainer.querySelector("img")
+        const fieldName = fieldPreviewContainer.dataset.name
 
-        // Inline Model
-        isInlineRelated = fieldPreviewContainer.closest(".inline-related")
-        isHasOriginal = fieldPreviewContainer.closest(".has_original")
-
-        if ((isInlineRelated && isHasOriginal) || !isInlineRelated) {
-            img = fieldPreviewContainer.querySelector("img")
-            fieldName = fieldPreviewContainer.dataset.name
-
-            parentModule = fieldPreviewContainer.closest('.module')
-            inputField = parentModule.querySelector(`.field-${fieldName} input[type='file']`)
+        if (img && fieldName) {
+            const parentModule = fieldPreviewContainer.closest('.module')
+            const inputField = parentModule.querySelector(`.field-${fieldName} input[type='file']`)
 
             if (inputField) {
                 inputField.addEventListener("change", (evt) => {
