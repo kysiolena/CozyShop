@@ -1,0 +1,20 @@
+{% extends 'authapp/emails/base.html' %}
+
+{% block title %}Delete Account Email Confirmation{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">
+        Hi{% if user.username %}, {{ user.username }}{% endif %}! 👋
+    </h1>
+
+    <p class="mb-2">Please click on the link below to confirm completely DELETE your Account:</p>
+    <a class="btn btn-danger"
+       href="http://{{ domain }}{% url 'profile_delete_confirm_page' uidb64=uid token=token %}"
+    >
+        CONFIRM DELETE ACCOUNT
+    </a>
+    <p class="mt-2">
+        Or do nothing if you haven't previously sent the request for delete your Account on the
+        <a href="http://{{ domain }}{% url 'shop_page' %}">Cozy Shop</a> website.
+    </p>
+{% endblock %}

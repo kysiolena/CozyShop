@@ -2,6 +2,7 @@ import logging
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth import views as auth_views, get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.messages.views import SuccessMessageMixin
@@ -14,7 +15,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
 from django.views.generic import TemplateView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView
 
 from authapp.forms import (
     SignUpForm,
@@ -327,8 +328,76 @@ class ProfileDeleteView(
     template_name = "authapp/profile-delete.html"
     page_name = "Delete Profile"
 
+    def post(self, request, *args, **kwargs):
+        user = request.user
 
-class ProfileDeleteConfirmView(DeleteView):
-    """View for confirm delete user profile."""
+        # Create User email confirmation for Delete account
+        current_site = get_current_site(self.request)
+        email_subject = "Delete Your Account"
 
-    pass
+        message = render_to_string(
+            template_name="authapp/emails/delete-account.html",
+            context={
+                "user": user,
+                "domain": current_site.domain,
+                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                "token": default_token_generator.make_token(user),
+            },
+        )
+
+        try:
+            send_mail(
+                subject=email_subject,
+                message="",
+                html_message=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+
+            messages.info(
+                self.request,
+                "We have sent you an email with link to complete deletion of your account.",
+            )
+
+        except Exception as e:
+            logger.error(f"Failed to send HTML email: {e}")
+
+            messages.error(
+                self.request,
+                "We are unable to send you a confirmation email for delete your account, please contact our support team.",
+            )
+
+        return redirect("profile_delete_page")
+
+
+class ProfileDeleteConfirmView(View):
+    """View for confirming and performing user account deletion via email link."""
+
+    def get(self, request, uidb64, token, *args, **kwargs):
+        try:
+            # Decode the user ID from the URL
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = UserModel.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
+            user = None
+
+        # Check if the token is valid for this specific user
+        if user is not None and default_token_generator.check_token(user, token):
+            # Log the user out before deleting to clear the session
+            logout(request)
+
+            # Delete the user account
+            user.delete()
+
+            messages.success(
+                request,
+                "Your account has been permanently deleted. We're sorry to see you go.",
+            )
+
+            return redirect("shop_page")
+        else:
+            # If the link is tampered with or expired
+            messages.error(request, "The deletion link is invalid or has expired.")
+
+            return redirect("shop_page")
