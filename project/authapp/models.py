@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models.signals import post_save
 
+from config import settings
 from shop.models import TimeStampedModel
 
 
@@ -34,6 +35,13 @@ class Profile(TimeStampedModel):
 
     def __str__(self):
         return self.user.username
+
+    @property
+    def img(self):
+        if self.image and self.image.url:
+            return self.image.url
+        else:
+            return f"/{settings.STATIC_URL}shop/images/image-not-found.png"
 
 
 # Create a user Profile by default when user signs up

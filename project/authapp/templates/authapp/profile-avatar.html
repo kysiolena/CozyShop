@@ -4,14 +4,8 @@
 
 {% block form %}
     <div class="mb-4">
-        {% if object.image.url %}
-
-            <img src="{{ object.image.url }}" class="profile-img img-thumbnail"
-                 alt="{{ user.username|default_if_none:'img' }}">
-        {% else %}
-            <img src="{% static 'shop/images/image-not-found.png' %}" class="profile-img img-thumbnail"
-                 alt="{{ user.username|default_if_none:'img' }}">
-        {% endif %}
+        <img src="{{ object.img }}" class="profile-img img-thumbnail"
+             alt="{{ user.username|default_if_none:'img' }}">
     </div>
 
     {% include 'authapp/blocks/form.html' with action='profile_avatar_page' enctype='multipart/form-data' button='Save' %}
