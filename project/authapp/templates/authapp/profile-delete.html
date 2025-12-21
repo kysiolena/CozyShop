@@ -1,0 +1,12 @@
+{% extends "authapp/layout/profile.html" %}
+
+{% block form %}
+    <p class="text-muted mb-4">
+        If you want to delete your account, we will send you a confirmation email.
+        Check your inbox and follow the link in the email.
+        Your account will then be completely deleted.
+    </p>
+
+    {% include 'authapp/blocks/form.html' with button='Send deletion confirmation by email' button_type='danger' %}
+
+{% endblock %}

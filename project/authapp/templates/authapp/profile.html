@@ -1,0 +1,12 @@
+{% extends "authapp/layout/profile.html" %}
+
+{% block form %}
+    
+    {% include 'authapp/blocks/form.html' with action='profile_page' button='Save' %}
+
+    <div class="mt-4">
+        <hr>
+        <a href="{% url 'update_password_page' %}" class="btn btn-warning">Change Password</a>
+    </div>
+
+{% endblock %}

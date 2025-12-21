@@ -1,15 +1,7 @@
 from django.conf import settings
 from django.db import models
 
-
-class TimeStampedModel(models.Model):
-    """Abstract base class that adds created_at and updated_at fields to models."""
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
+from shop.models import TimeStampedModel
 
 
 class Category(TimeStampedModel):
@@ -23,8 +15,8 @@ class Category(TimeStampedModel):
 
     @property
     def img(self):
-        if self.image:
-            return self.image.url
+        if self.image and self.image.url:
+            return self.image if str(self.image).startswith("http") else self.image.url
         else:
             return None
 

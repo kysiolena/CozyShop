@@ -1,0 +1,8 @@
+<li class="nav-item">
+    {% url tab_url as str_tab_url %}
+    <a
+            {% if request.get_full_path == str_tab_url %} class="nav-link active" aria-current="page"
+            {% else %} class="nav-link"
+            {% endif %}
+                                                          href="{{ str_tab_url }}">{{ tab_name }}</a>
+</li>

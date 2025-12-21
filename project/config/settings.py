@@ -14,6 +14,21 @@ import json
 import os
 from pathlib import Path
 
+
+def str_to_bool(value) -> bool:
+    """
+    Convert string to boolean.
+    """
+    return True if value == "True" else False
+
+
+def str_to_int(value) -> int | None:
+    """
+    Convert string to integer.
+    """
+    return int(value) if (value or "").isdigit() else None
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,7 +39,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.getenv("DEBUG")) if os.getenv("DEBUG") else False
+DEBUG = str_to_bool(os.getenv("DEBUG"))
 
 ALLOWED_HOSTS = (
     json.loads(os.getenv("ALLOWED_HOSTS")) if os.getenv("ALLOWED_HOSTS") else []
@@ -39,8 +54,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_css_inline",
     "shop",
     "catalog",
+    "authapp",
 ]
 
 MIDDLEWARE = [
@@ -103,6 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+AUTH_USER_MODEL = "authapp.CustomUser"
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
@@ -130,3 +148,17 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Email settings
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
+EMAIL_USE_TLS = str_to_bool(os.getenv("EMAIL_USE_TLS"))
+EMAIL_USE_SSL = str_to_bool(os.getenv("EMAIL_USE_SSL"))
+
+# This is the address that will appear in the "From" field
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
+
+# Looking to send emails in production? Check out our Email API/SMTP product!
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = str_to_int(os.getenv("EMAIL_PORT"))
