@@ -9,6 +9,8 @@ from django.contrib.auth.forms import (
     SetPasswordForm,
 )
 
+from authapp.models import Profile
+
 # Get User Current Model
 UserModel = get_user_model()
 
@@ -34,6 +36,49 @@ class BootstrapFieldsMixin:
                     existing_classes.append("is-invalid")
                 # Update the 'class' attribute
                 field.widget.attrs.update({"class": " ".join(existing_classes)})
+
+
+class ProfileContactsUpdateForm(BootstrapFieldsMixin, forms.ModelForm):
+
+    class Meta:
+        model = Profile
+        fields = (
+            "phone",
+            "address1",
+            "address2",
+            "city",
+            "state",
+            "zipcode",
+            "country",
+        )
+
+
+class ProfileAvatarUpdateForm(BootstrapFieldsMixin, forms.ModelForm):
+
+    class Meta:
+        model = Profile
+        fields = ("image",)
+
+
+class ProfileUpdateForm(BootstrapFieldsMixin, UserChangeForm):
+    # Hide password stuff
+    password = None
+
+    # Get other fields
+    first_name = forms.CharField(max_length=30, required=False, help_text="Optional.")
+    last_name = forms.CharField(max_length=30, required=False, help_text="Optional.")
+    email = forms.EmailField(
+        max_length=254, help_text="Required. Inform a valid email address."
+    )
+
+    class Meta:
+        model = UserModel
+        fields = (
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+        )
 
 
 class PasswordResetConfirmForm(BootstrapFieldsMixin, SetPasswordForm):
@@ -63,27 +108,6 @@ class PasswordChangeForm(BootstrapFieldsMixin, BasePasswordChangeForm):
     class Meta:
         model = UserModel
         fields = ["new_password1", "new_password2"]
-
-
-class ProfileUpdateForm(BootstrapFieldsMixin, UserChangeForm):
-    # Hide password stuff
-    password = None
-
-    # Get other fields
-    first_name = forms.CharField(max_length=30, required=False, help_text="Optional.")
-    last_name = forms.CharField(max_length=30, required=False, help_text="Optional.")
-    email = forms.EmailField(
-        max_length=254, help_text="Required. Inform a valid email address."
-    )
-
-    class Meta:
-        model = UserModel
-        fields = (
-            "username",
-            "first_name",
-            "last_name",
-            "email",
-        )
 
 
 class SignInForm(BootstrapFieldsMixin, AuthenticationForm):

@@ -1,0 +1,5 @@
+<ul class="nav nav-tabs mb-4">
+    {% for tab in tabs %}
+        {% include 'authapp/blocks/tab.html' with tab_name=tab.name tab_url=tab.url %}
+    {% endfor %}
+</ul>

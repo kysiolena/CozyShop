@@ -1,0 +1,45 @@
+{% extends "authapp/layout/profile.html" %}
+
+{% load static %}
+
+{% block form %}
+    <div class="mb-4">
+        {% if object.image.url %}
+
+            <img src="{{ object.image.url }}" class="profile-img img-thumbnail"
+                 alt="{{ user.username|default_if_none:'img' }}">
+        {% else %}
+            <img src="{% static 'shop/images/image-not-found.png' %}" class="profile-img img-thumbnail"
+                 alt="{{ user.username|default_if_none:'img' }}">
+        {% endif %}
+    </div>
+
+    {% include 'authapp/blocks/form.html' with action='profile_avatar_page' enctype='multipart/form-data' button='Save' %}
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const img = document.querySelector(".profile-img")
+            const inputField = document.querySelector("input[name='image']")
+
+            if (inputField && img) {
+                inputField.addEventListener("change", (evt) => {
+                    const file = evt.target.files[0];
+                    const reader = new FileReader();
+
+                    reader.addEventListener("load", (evt) => {
+                        img.src = evt.target.result;
+                    });
+
+                    if (file) {
+                        reader.readAsDataURL(file);
+                    } else {
+                        img.src = "{% static 'shop/images/image-not-found.png' %}";
+                    }
+                })
+            }
+        })
+    </script>
+{% endblock %}

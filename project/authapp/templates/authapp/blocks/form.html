@@ -1,4 +1,8 @@
-<form {% if action %} action="{% url action %}" {% endif %} method="post">
+<form
+        {% if action %} action="{% url action %}" {% endif %}
+        {% if enctype %} enctype="{{ enctype }}" {% endif %}
+                        method="post"
+>
     {% csrf_token %}
 
     {% for field in form %}
@@ -21,5 +25,8 @@
         {% endif %}
     {% endfor %}
 
-    <button class="btn btn-dark" type="submit">{{ button }}</button>
+    <button class="btn btn-{% if button_type %}{{ button_type }}{% else %}dark{% endif %}"
+            type="submit">
+        {{ button }}
+    </button>
 </form>

@@ -13,7 +13,8 @@ from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic import TemplateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from authapp.forms import (
     SignUpForm,
@@ -22,6 +23,8 @@ from authapp.forms import (
     PasswordChangeForm,
     PasswordResetConfirmForm,
     PasswordResetForm,
+    ProfileAvatarUpdateForm,
+    ProfileContactsUpdateForm,
 )
 from shop.views import BaseContextMixin
 
@@ -189,24 +192,6 @@ class SignOutView(RedirectNoAuthenticatedUserMixin, auth_views.LogoutView):
         return reverse_lazy("shop_page")
 
 
-class ProfileUpdateView(RedirectNoAuthenticatedUserMixin, BaseContextMixin, UpdateView):
-    """View for update base user profile information."""
-
-    template_name = "authapp/profile.html"
-    page_name = "Profile"
-    form_class = ProfileUpdateForm
-    success_url = reverse_lazy("profile_page")
-
-    def get_object(self, queryset=None):
-        """
-        Returns the object the view is displaying.
-        In this case, the Profile related to the currently logged-in user. (To Do)
-        """
-
-        # Ensure the user is logged in to access their own profile
-        return self.request.user
-
-
 class UpdatePasswordView(
     RedirectNoAuthenticatedUserMixin,
     BaseContextMixin,
@@ -264,3 +249,86 @@ class ResetPasswordConfirmView(
         )
 
         return super().form_valid(form)
+
+
+class ProfileTabsMixin(BaseContextMixin):
+
+    def get_context_data(self, **kwargs):
+        tabs = [
+            {"name": "Main", "url": "profile_page"},
+            {"name": "Avatar", "url": "profile_avatar_page"},
+            {"name": "Contacts", "url": "profile_contacts_page"},
+            {"name": "Delete", "url": "profile_delete_page"},
+        ]
+
+        context = super().get_context_data(**kwargs)
+
+        context["tabs"] = tabs
+
+        return context
+
+
+class ProfileUpdateView(
+    RedirectNoAuthenticatedUserMixin, ProfileTabsMixin, SuccessMessageMixin, UpdateView
+):
+    """View for update main user profile information."""
+
+    template_name = "authapp/profile.html"
+    page_name = "Main Profile"
+    form_class = ProfileUpdateForm
+    success_url = reverse_lazy("profile_page")
+    success_message = "Your profile information has been updated successfully!"
+
+    def get_object(self, queryset=None):
+        """
+        Returns the object currently logged-in user.
+        """
+
+        return self.request.user
+
+
+class ProfileAvatarUpdateView(
+    RedirectNoAuthenticatedUserMixin, ProfileTabsMixin, SuccessMessageMixin, UpdateView
+):
+    """View for update user profile avatar."""
+
+    template_name = "authapp/profile-avatar.html"
+    page_name = "Avatar Profile"
+    form_class = ProfileAvatarUpdateForm
+    success_url = reverse_lazy("profile_avatar_page")
+    success_message = "Your profile picture has been updated successfully!"
+
+    def get_object(self, queryset=None):
+        """Return the Profile instance associated with the current user."""
+        return self.request.user.profile
+
+
+class ProfileContactsUpdateView(
+    RedirectNoAuthenticatedUserMixin, ProfileTabsMixin, SuccessMessageMixin, UpdateView
+):
+    """View for update contacts profile avatar."""
+
+    template_name = "authapp/profile-contacts.html"
+    page_name = "Contacts Profile"
+    form_class = ProfileContactsUpdateForm
+    success_url = reverse_lazy("profile_contacts_page")
+    success_message = "Your profile contacts have been updated successfully!"
+
+    def get_object(self, queryset=None):
+        """Return the Profile instance associated with the current user."""
+        return self.request.user.profile
+
+
+class ProfileDeleteView(
+    RedirectNoAuthenticatedUserMixin, ProfileTabsMixin, TemplateView
+):
+    """View for delete user profile."""
+
+    template_name = "authapp/profile-delete.html"
+    page_name = "Delete Profile"
+
+
+class ProfileDeleteConfirmView(DeleteView):
+    """View for confirm delete user profile."""
+
+    pass

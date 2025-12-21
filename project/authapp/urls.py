@@ -2,13 +2,17 @@ from django.urls import path
 
 from authapp.views import (
     UpdatePasswordView,
-    ProfileUpdateView,
     SignOutView,
     SignUpView,
     SignInView,
     ActivateAccountView,
     ResetPasswordView,
     ResetPasswordConfirmView,
+    ProfileUpdateView,
+    ProfileAvatarUpdateView,
+    ProfileContactsUpdateView,
+    ProfileDeleteView,
+    ProfileDeleteConfirmView,
 )
 
 urlpatterns = [
@@ -20,12 +24,26 @@ urlpatterns = [
         name="activate_page",
     ),
     path("sign-out/", SignOutView.as_view(), name="sign_out_page"),
-    path("profile/", ProfileUpdateView.as_view(), name="profile_page"),
     path("update-password/", UpdatePasswordView.as_view(), name="update_password_page"),
     path("reset-password/", ResetPasswordView.as_view(), name="reset_password_page"),
     path(
         "reset-password/confirm/<uidb64>/<token>/",
         ResetPasswordConfirmView.as_view(),
         name="reset_password_confirm_page",
+    ),
+    path("profile/", ProfileUpdateView.as_view(), name="profile_page"),
+    path(
+        "profile/avatar/", ProfileAvatarUpdateView.as_view(), name="profile_avatar_page"
+    ),
+    path(
+        "profile/contacts/",
+        ProfileContactsUpdateView.as_view(),
+        name="profile_contacts_page",
+    ),
+    path("profile/delete/", ProfileDeleteView.as_view(), name="profile_delete_page"),
+    path(
+        "profile/delete/confirm/<uidb64>/<token>/",
+        ProfileDeleteConfirmView.as_view(),
+        name="profile_delete_confirm_page",
     ),
 ]
