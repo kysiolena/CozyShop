@@ -31,6 +31,15 @@
         </a>
 
         {% include 'authapp/blocks/header-buttons.html' %}
+        <div class="d-flex gap-2">
+            {% if user.is_authenticated %}
+                {% include 'authapp/blocks/button-profile.html' %}
+                {% include 'authapp/blocks/button-sign-out.html' %}
+            {% else %}
+                {% include 'authapp/blocks/button-sign-in.html' %}
+                {% include 'authapp/blocks/button-sign-up.html' %}
+            {% endif %}
+        </div>
     </div>
 </nav>
 
