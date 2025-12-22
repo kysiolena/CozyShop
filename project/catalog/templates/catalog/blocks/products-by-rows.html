@@ -23,12 +23,7 @@
                         </li>
                         <li class="list-group-item">
                             Price:
-                            {% if product.sale_price %}
-                                <del class="fs-6">${{ product.price }}</del>
-                                <ins class="fs-4">${{ product.sale_price }}</ins>
-                            {% else %}
-                                <span class="fs-4">${{ product.price }}</span>
-                            {% endif %}
+                            {% include 'catalog/blocks/product-price.html' %}
                         </li>
                     </ul>
                     <div class="card-body">
