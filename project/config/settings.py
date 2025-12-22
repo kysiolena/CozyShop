@@ -14,20 +14,7 @@ import json
 import os
 from pathlib import Path
 
-
-def str_to_bool(value) -> bool:
-    """
-    Convert string to boolean.
-    """
-    return True if value == "True" else False
-
-
-def str_to_int(value) -> int | None:
-    """
-    Convert string to integer.
-    """
-    return int(value) if (value or "").isdigit() else None
-
+from config.utils import str_to_bool, str_to_int
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
