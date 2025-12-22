@@ -56,8 +56,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_css_inline",
     "shop",
-    "catalog",
     "authapp",
+    "catalog",
+    "cart",
 ]
 
 MIDDLEWARE = [
