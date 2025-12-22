@@ -20,7 +20,10 @@
 
 <nav class="navbar bg-light sticky-top">
     <div class="container justify-content-space-between">
-        <div class=""></div>
+        <div class="d-flex gap-2">
+            {% include 'catalog/blocks/button-catalog.html' %}
+            {% include 'cart/blocks/button-cart.html' with class='ms-2' %}
+        </div>
 
         <a class="navbar-brand" href="{% url 'shop_page' %}">
             <img src="{% static 'shop/images/logo.png' %}"
@@ -30,7 +33,6 @@
             Cozy Shop
         </a>
 
-        {% include 'authapp/blocks/header-buttons.html' %}
         <div class="d-flex gap-2">
             {% if user.is_authenticated %}
                 {% include 'authapp/blocks/button-profile.html' %}
