@@ -22,7 +22,7 @@
                         </li>
                         <li class="list-group-item">
                             Price:
-                            {% include 'catalog/blocks/product-price.html' %}
+                            {% include 'catalog/blocks/product-price.html' with price=product.price sale_price=product.sale_price %}
                         </li>
                         <li class="list-group-item">
                             Categories: |
