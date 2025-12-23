@@ -1,4 +1,9 @@
+import json
+import logging
 from typing import TypedDict
+
+# Logger
+logger = logging.getLogger(__name__)
 
 
 class TCartItem(TypedDict):
@@ -22,57 +27,87 @@ class Cart:
         # Make sure cart is available on all pages of site
         self._cart = cart
 
-    def get_items(self, request, ids_only=True) -> list[TCartItem]:
-        # Default Cart
-        cart_items = []
+    def get_items(self) -> list[TCartItem]:
+        return self._cart
 
-        # Some logic...
+    def get_ids(self) -> list[int]:
+        return [item["product_id"] for item in self._cart]
 
-        return cart_items
+    def get_item(self, product_id: int) -> TCartItem | None:
+        try:
+            return [item for item in self._cart if item["product_id"] == product_id][0]
+        except Exception as e:
+            logger.error(f"Failed to get Product #{product_id} from the Cart: {e}")
 
-    def add_item(self, request, product_id: int, quantity: int) -> bool:
-        new_item: TCartItem = {"product_id": product_id, "quantity": quantity}
+            return None
 
-        # Current Cart
-        cart_items = self.get_items(request, False)
+    def get_item_index(self, product_id: int) -> int:
+        try:
+            item = self.get_item(product_id)
 
-        # Update Cart
-        cart_items.append(new_item)
+            return self._cart.index(item)
+        except Exception as e:
+            logger.error(f"Failed to get Product #{product_id} index in the Cart: {e}")
 
-        # Some logic...
+            return -1
 
-        return True
+    def add_item(self, product_id: int, quantity: int) -> bool:
+        try:
+            # Product already in the cart
+            if product_id in self.get_ids():
+                return False
 
-    def update_item(self, request, product_id: int, quantity: int) -> bool:
-        # Current Cart
-        cart_items = self.get_items(request, False)
+            new_item: TCartItem = {"product_id": product_id, "quantity": quantity}
 
-        def check_and_update_item_quantity(item: TCartItem):
-            """Update cart item quantity"""
-            if item["product_id"] == product_id:
-                item["quantity"] = quantity
+            # Update Cart
+            self._cart.append(new_item)
 
-            return item
+            self._session.modified = True
 
-        # New cart
-        new_cart_items = [check_and_update_item_quantity(c_i) for c_i in cart_items]
+            return True
+        except Exception as e:
+            logger.error(f"Failed to add Product #{product_id} to the Cart: {e}")
 
-        # Some logic...
+            return False
 
-        return True
+    def delete_item(self, product_id: int) -> bool:
+        try:
+            # Update cart
+            item_index = self.get_item_index(product_id)
 
-    def delete_item(self, request, product_id: int) -> bool:
-        # Current Cart
-        cart_items = self.get_items(request, False)
+            del self._cart[item_index]
 
-        # New cart
-        new_cart_items = [c_i for c_i in cart_items if c_i != product_id]
+            self._session.modified = True
 
-        # Some logic...
+            return True
+        except Exception as e:
+            logger.error(f"Failed to delete Product #{product_id} from the Cart: {e}")
 
-        return True
+            return False
 
-    def clear(self) -> bool:
-        # Some logic...
+    def update(self, data: list[TCartItem]) -> bool:
+        try:
+            # Update cart
+            self._cart = self._session[self._key] = data
 
-        return True
+            return True
+        except Exception as e:
+            logger.error(f"Failed to update Cart: {e}")
+
+            return False
+
+    def clean(self) -> bool:
+        try:
+            self._cart = self._session[self._key] = []
+
+            return True
+        except Exception as e:
+            logger.error(f"Failed to clean the Cart: {e}")
+
+            return False
+
+    def __len__(self):
+        return len(self._cart)
+
+    def __str__(self):
+        return json.dumps(self._cart)
