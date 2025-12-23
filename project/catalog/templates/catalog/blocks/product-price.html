@@ -1,0 +1,6 @@
+{% if sale_price and sale_price != price %}
+    <del class="fs-6 text-muted">${{ price }}</del>
+    <ins class="fs-4 text-decoration-none">${{ sale_price }}</ins>
+{% else %}
+    <span class="fs-4 text-decoration-none">${{ price }}</span>
+{% endif %}

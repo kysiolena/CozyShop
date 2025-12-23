@@ -1,0 +1,25 @@
+{% extends "shop/layout/base.html" %}
+
+{% load static %}
+
+{% block main %}
+    <div class="row pt-4">
+        <div class="col-12">
+            {% if not cart_items|length %}
+                <p class="mb-4">
+                    Your cart is currently empty. But you can always choose something beautiful from our catalog 😉
+                </p>
+
+                {% include 'catalog/blocks/button-catalog-simple.html' %}
+            {% else %}
+                {% include 'cart/blocks/table.html' %}
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'cart/js/delete_cart_item.js' %}"></script>
+    <script src="{% static 'cart/js/update_cart.js' %}"></script>
+{% endblock %}

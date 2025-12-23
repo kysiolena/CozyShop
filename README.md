@@ -36,7 +36,7 @@
 5. [ ] Add Search by Name or Description of Product
 6. [x] Add Authorization (forms, views, templates, email verification)
 7. [x] Add Profile (model, form, views, templates)
-8. [ ] Add Cart functionality
+8. [x] Add Cart functionality
 9. [ ] Add Order (model, form, views, templates)
 10. [ ] Add Payment logic (PayPal sandbox)
 11. [ ] Add Comment (model, form, view, template)
