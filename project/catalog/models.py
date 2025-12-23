@@ -46,7 +46,7 @@ class Product(TimeStampedModel):
 
     @property
     def sale_price(self):
-        if self.sale:
+        if self.sale and self.in_stock:
             return round(self.price - (self.price * self.sale), 2)
         else:
             return None
