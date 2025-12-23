@@ -19,10 +19,11 @@ class ProfileAdmin(ImagePreviewMixin, admin.ModelAdmin):
         "state",
         "zipcode",
         "country",
+        "cart_temporary",
     ]
 
     # Add image field and the new preview method to readonly_fields
-    readonly_fields = ["image_preview"]
+    readonly_fields = ["image_preview", "cart_temporary"]
 
 
 admin.site.register(Profile, ProfileAdmin)
@@ -43,10 +44,11 @@ class ProfileInline(ImagePreviewMixin, admin.StackedInline):
         "state",
         "zipcode",
         "country",
+        "cart_temporary",
     ]
 
     # Add image field and the new preview method to readonly_fields
-    readonly_fields = ["image_preview"]
+    readonly_fields = ["image_preview", "cart_temporary"]
 
 
 # Extend User Model
