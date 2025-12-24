@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "authapp",
     "catalog",
     "cart",
+    "order",
 ]
 
 MIDDLEWARE = [
