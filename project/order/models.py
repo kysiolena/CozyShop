@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models.signals import post_save
 
 from catalog.models import Product
 from shop.models import TimeStampedModel
@@ -8,7 +9,13 @@ UserModel = get_user_model()
 
 
 class ShippingAddress(TimeStampedModel):
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.OneToOneField(
+        UserModel,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="shipping_address",
+    )
     shipping_full_name = models.CharField(max_length=200)
     shipping_address1 = models.CharField(max_length=100)
     shipping_address2 = models.CharField(max_length=100)
@@ -19,6 +26,17 @@ class ShippingAddress(TimeStampedModel):
 
     def __str__(self):
         return f"Shipping Address - {self.id}"
+
+
+# Create a user ShippingAddress by default when user signs up
+def create_shipping_address(sender, instance, created, **kwargs):
+    if created:
+        user_shipping_address = ShippingAddress(user=instance)
+        user_shipping_address.save()
+
+
+# Automate the shipping address thing
+post_save.connect(create_shipping_address, sender=UserModel)
 
 
 class Order(TimeStampedModel):
