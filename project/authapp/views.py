@@ -27,6 +27,7 @@ from authapp.forms import (
     ProfileAvatarUpdateForm,
     ProfileBillingInfoUpdateForm,
 )
+from order.forms import ShippingAddressForm
 from shop.views import BaseContextMixin
 
 # Logger
@@ -260,6 +261,7 @@ class ProfileTabsMixin(BaseContextMixin):
             {"name": "Avatar", "url": "profile_avatar_page"},
             {"name": "Contacts", "url": "profile_contacts_page"},
             {"name": "Billing Info", "url": "profile_billing_info_page"},
+            {"name": "Shipping Info", "url": "profile_shipping_info_page"},
             {"name": "Delete", "url": "profile_delete_page"},
         ]
 
@@ -319,6 +321,22 @@ class ProfileBillingInfoUpdateView(
     def get_object(self, queryset=None):
         """Return the Profile instance associated with the current user."""
         return self.request.user.profile
+
+
+class ProfileShippingInfoUpdateView(
+    RedirectNoAuthenticatedUserMixin, ProfileTabsMixin, SuccessMessageMixin, UpdateView
+):
+    """View for update profile Shipping Info."""
+
+    template_name = "authapp/profile-shipping-info.html"
+    page_name = "Shipping Info Profile"
+    form_class = ShippingAddressForm
+    success_url = reverse_lazy("profile_shipping_info_page")
+    success_message = "Your profile shipping info has been updated successfully!"
+
+    def get_object(self, queryset=None):
+        """Return the Shipping Address instance associated with the current user."""
+        return self.request.user.shipping_address
 
 
 class ProfileDeleteView(

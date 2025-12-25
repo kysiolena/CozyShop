@@ -14,6 +14,7 @@ from authapp.views import (
     ProfileDeleteView,
     ProfileDeleteConfirmView,
     ProfileBillingInfoUpdateView,
+    ProfileShippingInfoUpdateView,
 )
 
 urlpatterns = [
@@ -40,6 +41,11 @@ urlpatterns = [
         "profile/billing-info/",
         ProfileBillingInfoUpdateView.as_view(),
         name="profile_billing_info_page",
+    ),
+    path(
+        "profile/shipping-info/",
+        ProfileShippingInfoUpdateView.as_view(),
+        name="profile_shipping_info_page",
     ),
     path("profile/delete/", ProfileDeleteView.as_view(), name="profile_delete_page"),
     path(

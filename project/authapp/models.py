@@ -23,7 +23,9 @@ UserModel = get_user_model()
 
 
 class Profile(TimeStampedModel):
-    user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        UserModel, on_delete=models.CASCADE, related_name="profile"
+    )
     image = models.ImageField(upload_to="profiles/", blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     address1 = models.CharField(max_length=100, blank=True, null=True)
