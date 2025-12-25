@@ -10,10 +10,7 @@ from catalog.models import Product
 from shop.views import BaseContextMixin
 
 
-class CartListView(BaseContextMixin, TemplateView):
-    template_name = "cart/index.html"
-    page_name = "Cart"
-
+class CartContextMixin:
     def get_context_data(self, **kwargs):
         cart = Cart(self.request)
 
@@ -63,6 +60,11 @@ class CartListView(BaseContextMixin, TemplateView):
         context["total_sale_price"] = round(total_sale_price, 2)
 
         return context
+
+
+class CartListView(BaseContextMixin, CartContextMixin, TemplateView):
+    template_name = "cart/index.html"
+    page_name = "Cart"
 
 
 class CartUpdateView(View):
