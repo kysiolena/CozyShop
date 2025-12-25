@@ -16,7 +16,9 @@ from shop.forms import BootstrapFieldsMixin
 UserModel = get_user_model()
 
 
-class ProfileContactsUpdateForm(BootstrapFieldsMixin, forms.ModelForm):
+class ProfileBillingInfoUpdateForm(BootstrapFieldsMixin, forms.ModelForm):
+    address1 = forms.CharField(label="Street, building")
+    address2 = forms.CharField(label="Apartment, etc.")
 
     class Meta:
         model = Profile

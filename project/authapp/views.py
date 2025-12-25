@@ -25,7 +25,7 @@ from authapp.forms import (
     PasswordResetConfirmForm,
     PasswordResetForm,
     ProfileAvatarUpdateForm,
-    ProfileContactsUpdateForm,
+    ProfileBillingInfoUpdateForm,
 )
 from shop.views import BaseContextMixin
 
@@ -259,6 +259,7 @@ class ProfileTabsMixin(BaseContextMixin):
             {"name": "Main", "url": "profile_page"},
             {"name": "Avatar", "url": "profile_avatar_page"},
             {"name": "Contacts", "url": "profile_contacts_page"},
+            {"name": "Billing Info", "url": "profile_billing_info_page"},
             {"name": "Delete", "url": "profile_delete_page"},
         ]
 
@@ -304,16 +305,16 @@ class ProfileAvatarUpdateView(
         return self.request.user.profile
 
 
-class ProfileContactsUpdateView(
+class ProfileBillingInfoUpdateView(
     RedirectNoAuthenticatedUserMixin, ProfileTabsMixin, SuccessMessageMixin, UpdateView
 ):
-    """View for update contacts profile avatar."""
+    """View for update profile Billing Info."""
 
-    template_name = "authapp/profile-contacts.html"
-    page_name = "Contacts Profile"
-    form_class = ProfileContactsUpdateForm
-    success_url = reverse_lazy("profile_contacts_page")
-    success_message = "Your profile contacts have been updated successfully!"
+    template_name = "authapp/profile-billing-info.html"
+    page_name = "Billing Info Profile"
+    form_class = ProfileBillingInfoUpdateForm
+    success_url = reverse_lazy("profile_billing_info_page")
+    success_message = "Your profile billing info has been updated successfully!"
 
     def get_object(self, queryset=None):
         """Return the Profile instance associated with the current user."""
