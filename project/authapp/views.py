@@ -259,9 +259,9 @@ class ProfileTabsMixin(BaseContextMixin):
         tabs = [
             {"name": "Main", "url": "profile_page"},
             {"name": "Avatar", "url": "profile_avatar_page"},
-            {"name": "Contacts", "url": "profile_contacts_page"},
             {"name": "Billing Info", "url": "profile_billing_info_page"},
             {"name": "Shipping Info", "url": "profile_shipping_info_page"},
+            {"name": "Orders", "url": "profile_orders_page"},
             {"name": "Delete", "url": "profile_delete_page"},
         ]
 
