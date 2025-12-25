@@ -8,10 +8,12 @@ from order.views import (
     OrderDeleteView,
     PaymentSuccessView,
     PaymentFailView,
+    OrderCheckoutView,
 )
 
 urlpatterns = [
     path("", OrderListView.as_view(), name="order_page"),
+    path("checkout/", OrderCheckoutView.as_view(), name="order_checkout_page"),
     path("create/", OrderCreateView.as_view(), name="order_create_page"),
     path("read/<int:order_id>", OrderReadView.as_view(), name="order_read_page"),
     path("update/<int:order_id>", OrderUpdateView.as_view(), name="order_update_page"),
