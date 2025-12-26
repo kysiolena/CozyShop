@@ -182,7 +182,8 @@ class Cart:
                 else:
                     raise Exception("Field cart_temporary is blank or NULL")
             else:
-                raise Exception("User is not authenticated")
+                # If the user is not logged in, the profile cart is empty
+                return []
         except Exception as e:
             logger.error(f"Failed to get Cart from Profile: {e}")
 
@@ -206,7 +207,8 @@ class Cart:
 
                 return True
             else:
-                raise Exception("User is not authenticated")
+                # If the user is not logged in, we do not need to update the profile cart
+                return True
         except Exception as e:
             logger.error(f"Failed to set items to profile from the Cart: {e}")
 
