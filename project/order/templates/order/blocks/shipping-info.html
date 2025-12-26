@@ -4,9 +4,9 @@
             Shipping Info
         </div>
         <div class="card-body">
-            {{ shipping_form.as_p }}
+            {% include 'shop/blocks/form.html' with form=shipping_form action='order_billing_page' button='Continue To Billing' %}
         </div>
     </div>
 
-    <a href="#" class="btn btn-dark mt-2">Continue To Billing</a>
+
 </div>

@@ -8,7 +8,7 @@
              alt="{{ user.username|default_if_none:'img' }}">
     </div>
 
-    {% include 'authapp/blocks/form.html' with action='profile_avatar_page' enctype='multipart/form-data' button='Save' %}
+    {% include 'shop/blocks/form.html' with action='profile_avatar_page' enctype='multipart/form-data' button='Save' %}
 
 {% endblock %}
 
