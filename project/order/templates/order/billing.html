@@ -5,7 +5,14 @@
         <div class="col-3"></div>
         <div class="col-6">
             <h1 class="pb-4">{{ page_name }}</h1>
+
+            {#            {% include 'cart/blocks/summary.html' %}#}
+
+            {% include 'order/blocks/shipping-info-readonly.html' %}
+
+            {% include 'order/blocks/billing-info.html' %}
         </div>
         <div class="col-3"></div>
     </div>
+
 {% endblock %}
