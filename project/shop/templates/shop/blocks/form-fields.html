@@ -1,0 +1,19 @@
+{% for field in form %}
+    <div class="mb-3">
+        <label class="form-label">{{ field.label }}</label>
+        {{ field }}
+
+        {% if field.help_text %}
+            <div class="form-text">{{ field.help_text }}</div>
+        {% endif %}
+        {% for error in field.errors %}
+            <div class="text-danger small mt-2">{{ error }}</div>
+        {% endfor %}
+    </div>
+{% endfor %}
+
+{% for key, error in form.errors.items %}
+    {% if key == '__all__' %}
+        <div class="text-danger small mt-2">{{ error }}</div>
+    {% endif %}
+{% endfor %}
