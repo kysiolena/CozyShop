@@ -70,8 +70,21 @@ class CartListView(BaseContextMixin, CartContextMixin, TemplateView):
 class CartUpdateView(View):
 
     def post(self, request, *args, **kwargs):
-        # Parse the raw JSON body
-        data = json.loads(request.body)
+        try:
+            # Parse the raw JSON body
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            message = "Invalid JSON format"
+
+            messages.error(self.request, message)
+
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": message,
+                },
+                status=400,
+            )
 
         cart = Cart(self.request)
 
@@ -98,7 +111,8 @@ class CartUpdateView(View):
             {
                 "status": "error",
                 "message": "Something went wrong",
-            }
+            },
+            status=400,
         )
 
 
@@ -129,15 +143,29 @@ class CartCleanView(View):
             {
                 "status": "error",
                 "message": "Something went wrong",
-            }
+            },
+            status=400,
         )
 
 
 class CartAddItemView(View):
     def post(self, request, *args, **kwargs):
         try:
-            # Parse the raw JSON body
-            data = json.loads(request.body)
+            try:
+                # Parse the raw JSON body
+                data = json.loads(request.body)
+            except json.JSONDecodeError:
+                message = "Invalid JSON format"
+
+                messages.error(self.request, message)
+
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": message,
+                    },
+                    status=400,
+                )
 
             product_id = data.get("product_id")
             quantity = data.get("quantity")
@@ -174,7 +202,8 @@ class CartAddItemView(View):
             {
                 "status": "error",
                 "message": "Something went wrong",
-            }
+            },
+            status=400,
         )
 
 
@@ -214,5 +243,6 @@ class CartDeleteItemView(View):
             {
                 "status": "error",
                 "message": "Something went wrong",
-            }
+            },
+            status=400,
         )
