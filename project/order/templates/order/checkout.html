@@ -1,16 +1,7 @@
-{% extends "shop/layout/base.html" %}
+{% extends "order/layout/base.html" %}
 
-{% block main %}
-    <div class="row pt-4">
-        <div class="col-3"></div>
-        <div class="col-6">
-            <h1 class="pb-4">{{ page_name }}</h1>
+{% block content %}
+    {% include 'cart/blocks/summary.html' %}
 
-            {% include 'cart/blocks/summary.html' %}
-
-            {% include 'order/blocks/shipping-info.html' %}
-        </div>
-        <div class="col-3"></div>
-    </div>
-
+    {% include 'order/blocks/shipping-info.html' %}
 {% endblock %}
