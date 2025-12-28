@@ -9,8 +9,10 @@
         {% include 'shop/blocks/form-fields.html' %}
     {% endblock %}
 
-    <button class="btn btn-{% if button_type %}{{ button_type }}{% else %}dark{% endif %}"
-            type="submit">
-        {{ button }}
-    </button>
+    {% if not button_hidden %}
+        <button class="btn btn-{% if button_type %}{{ button_type }}{% else %}dark{% endif %}"
+                type="submit">
+            {{ button }}
+        </button>
+    {% endif %}
 </form>
