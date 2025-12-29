@@ -1,4 +1,11 @@
+import logging
 from typing import Literal
+
+from cart.services import Cart
+from order.models import Order as OrderModel, OrderItem, PaymentMethod
+
+# Logger
+logger = logging.getLogger(__name__)
 
 TPaymentMethod = Literal["paypal", "card"]
 
@@ -70,6 +77,81 @@ class Order:
         self._bi = None
 
     def create(self) -> str | None:
-        # Clean session: cart, shipping/billing address, payment_method (TO DO)
-        # Return invoice
-        return "ksdlfjsd-jfksdjf-kjfjdk"
+        # Get Cart Session
+        cart = Cart(self._request)
+
+        # Get Cart Full Info
+        cart_full_info = cart.get_full_info()
+
+        # Get Payment Method
+        pm = self.get_pm()
+
+        # Change Payment Method from label to value
+        for p in PaymentMethod:
+            if p.label.lower() == pm:
+                pm = p.value
+                break
+
+        # Get Shipping Info
+        si = self.get_si()
+
+        # Combine Shipping Info
+        shipping_address = ""
+        for key, value in si.items():
+            if key not in [
+                "shipping_full_name",
+                "shipping_phone",
+                "shipping_email",
+            ]:
+                shipping_address += f"{value}\n"
+
+        # Order Data
+        order_data = {
+            "full_name": si["shipping_full_name"],
+            "phone": si["shipping_phone"],
+            "email": si["shipping_email"],
+            "shipping_address": shipping_address,
+            "amount_paid": cart_full_info["total_sale_price"],
+            "payment_method": pm,
+        }
+
+        if self._request.user.is_authenticated:
+            order_data["user_id"] = self._request.user.id
+
+        try:
+            # Create Order
+            order = OrderModel.objects.create(**order_data)
+        except Exception as e:
+            logger.error(f"Failed to create Order: {e}")
+
+            return None
+        else:
+            # Create Order Items
+            order_items = [
+                OrderItem(
+                    **{
+                        "order_id": order.id,
+                        "product_id": c_i["product"].id,
+                        "quantity": c_i["quantity"],
+                        "price": c_i["total_sale_price"],
+                    }
+                )
+                for c_i in cart_full_info["cart_items"]
+            ]
+
+            try:
+                # Save Order Items
+                OrderItem.objects.bulk_create(order_items)
+            except Exception as e:
+                logger.error(f"Failed to create Order Items: {e}")
+
+                return None
+            else:
+                # Clean Order Session
+                self.clean()
+
+                # Clean Cart Session
+                cart.clean()
+
+                # Return invoice
+                return order.invoice

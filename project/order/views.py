@@ -15,6 +15,7 @@ from authapp.views import ProfileTabsMixin, RedirectNoAuthenticatedUserMixin
 from cart.services import Cart
 from cart.views import CartContextMixin
 from order.forms import ShippingAddressForm, BillingInfoForm
+from order.models import Order as OrderModel
 from order.secvices import Order
 from shop.views import BaseContextMixin
 
@@ -216,31 +217,6 @@ class OrderCreateView(BaseContextMixin, TemplateView):
     invoice = None
 
     def get(self, request, *args, **kwargs):
-        cart = Cart(self.request)
-        order = Order(self.request)
-
-        # Get Payment Method and Shipping/Billing Info from Session
-        payment_method = order.get_pm()
-        shipping_info = order.get_si()
-        billing_info = order.get_bi()
-
-        # Redirect to the Checkout Page if:
-        # - Payment Method missed or
-        # - Shipping/Billing Info missed or
-        # - Cart is empty
-        if (
-            not shipping_info
-            or not payment_method
-            or not cart.__len__()
-            or (payment_method == "card" and not billing_info)
-        ):
-            messages.warning(
-                request,
-                "Missing required parameters for creating order.",
-            )
-
-            return redirect("order_checkout_page")
-
         # Get invoice (if it already exists)
         self.invoice = self.request.GET.get("invoice")
 
@@ -250,6 +226,31 @@ class OrderCreateView(BaseContextMixin, TemplateView):
 
             return super().get(request, *args, **kwargs)
         else:
+            cart = Cart(self.request)
+            order = Order(self.request)
+
+            # Get Payment Method and Shipping/Billing Info from Session
+            payment_method = order.get_pm()
+            shipping_info = order.get_si()
+            billing_info = order.get_bi()
+
+            # Redirect to the Checkout Page if:
+            # - Payment Method missed or
+            # - Shipping/Billing Info missed or
+            # - Cart is empty
+            if (
+                not shipping_info
+                or not payment_method
+                or not cart.__len__()
+                or (payment_method == "card" and not billing_info)
+            ):
+                messages.warning(
+                    request,
+                    "Missing required parameters for creating order.",
+                )
+
+                return redirect("order_checkout_page")
+
             # Create order and reload
             self.invoice = order.create()
 
@@ -266,13 +267,14 @@ class OrderCreateView(BaseContextMixin, TemplateView):
 
         if self.invoice:
             # Get Order
-            order = {"order_id": 1}
-            order_id = order.get("order_id")
+            order = OrderModel.objects.get(invoice=self.invoice)
+
+            if order:
+                context["order_id"] = order.id
 
             # Add form to payment to context
             pass
 
-        context["order_id"] = order_id
         context["error"] = self.error
 
         return context

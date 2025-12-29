@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.signals import post_save
@@ -17,6 +19,8 @@ class ShippingAddress(TimeStampedModel):
         related_name="shipping_address",
     )
     shipping_full_name = models.CharField(max_length=200)
+    shipping_phone = models.CharField(max_length=20)
+    shipping_email = models.EmailField(max_length=200)
     shipping_address1 = models.CharField(max_length=100)
     shipping_address2 = models.CharField(max_length=100)
     shipping_city = models.CharField(max_length=100)
@@ -39,6 +43,21 @@ def create_shipping_address(sender, instance, created, **kwargs):
 post_save.connect(create_shipping_address, sender=UserModel)
 
 
+class Status(models.TextChoices):
+    PENDING = "PE", "Pending"
+    IN_PROGRESS = "IP", "In Progress"
+    WAIT_PAYMENT = "WP", "Wait Payment"
+    PAID = "PD", "Paid"
+    SHIPPED = "SD", "Shipped"
+    COMPLETED = "CO", "Completed"
+    CANCELLED = "CA", "Cancelled"
+
+
+class PaymentMethod(models.TextChoices):
+    CARD = "CA", "Card"
+    PAY_PAL = "PP", "PayPal"
+
+
 class Order(TimeStampedModel):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, null=True, blank=True)
     full_name = models.CharField(max_length=200)
@@ -46,6 +65,18 @@ class Order(TimeStampedModel):
     email = models.EmailField(max_length=100)
     shipping_address = models.TextField(max_length=5000)
     amount_paid = models.DecimalField(max_digits=8, decimal_places=2)
+    status = models.CharField(
+        max_length=2, choices=Status.choices, default=Status.PENDING
+    )
+    payment_method = models.CharField(
+        max_length=2,
+        choices=PaymentMethod.choices,
+        default=PaymentMethod.PAY_PAL,
+        editable=False,
+    )
+    invoice = models.UUIDField(
+        default=uuid.uuid4, editable=False, unique=True, auto_created=True
+    )
 
     def __str__(self):
         return f"Order - {self.id}"

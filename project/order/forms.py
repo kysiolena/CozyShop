@@ -7,6 +7,8 @@ from shop.forms import BootstrapFieldsMixin
 
 class ShippingAddressForm(BootstrapFieldsMixin, forms.ModelForm):
     shipping_full_name = forms.CharField(label="Full Name")
+    shipping_phone = forms.CharField(label="Phone")
+    shipping_email = forms.EmailField(label="Email")
     shipping_address1 = forms.CharField(label="Street, building")
     shipping_address2 = forms.CharField(label="Apartment, etc.")
     shipping_city = forms.CharField(label="City")
@@ -18,6 +20,8 @@ class ShippingAddressForm(BootstrapFieldsMixin, forms.ModelForm):
         model = ShippingAddress
         fields = (
             "shipping_full_name",
+            "shipping_phone",
+            "shipping_email",
             "shipping_address1",
             "shipping_address2",
             "shipping_city",
