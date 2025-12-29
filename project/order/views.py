@@ -4,7 +4,6 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views import View
 from django.views.generic import (
     TemplateView,
     DetailView,
@@ -285,18 +284,14 @@ class OrderCreateView(BaseContextMixin, TemplateView):
         return context
 
 
-class PaymentCardView(View):
-    pass
-
-
 class PaymentSuccessView(BaseContextMixin, TemplateView):
     template_name = "order/payment-success.html"
     page_name = "Payment Success"
 
 
-class PaymentFailView(BaseContextMixin, TemplateView):
-    template_name = "order/payment-fail.html"
-    page_name = "Payment Fail"
+class PaymentFailedView(BaseContextMixin, TemplateView):
+    template_name = "order/payment-failed.html"
+    page_name = "Payment Failed"
 
 
 class OrderListView(RedirectNoAuthenticatedUserMixin, ProfileTabsMixin, TemplateView):

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_css_inline",
+    "paypal.standard.ipn",
     "shop",
     "authapp",
     "catalog",
@@ -152,3 +153,7 @@ EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = str_to_int(os.getenv("EMAIL_PORT"))
+
+# PayPal
+PAYPAL_TEST = str_to_bool(os.getenv("PAYPAL_TEST"))
+PAYPAL_RECEIVER_EMAIL = os.getenv("PAYPAL_RECEIVER_EMAIL")

@@ -23,3 +23,7 @@ export EMAIL_HOST=""
 export EMAIL_HOST_USER=""
 export EMAIL_HOST_PASSWORD=""
 export EMAIL_PORT=""
+
+# PayPal
+export PAYPAL_TEST="True"
+export PAYPAL_RECEIVER_EMAIL="" # Business Sandbox account
