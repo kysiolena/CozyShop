@@ -7,6 +7,8 @@
 {#{% endblock %}#}
 
 {% block content %}
+    {% include 'cart/blocks/summary.html' %}
+
     {% include 'order/blocks/shipping-info-readonly.html' %}
 
     {% include 'order/blocks/billing-info.html' %}
