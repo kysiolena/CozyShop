@@ -15,8 +15,8 @@ from authapp.views import ProfileTabsMixin, RedirectNoAuthenticatedUserMixin
 from cart.services import Cart
 from cart.views import CartContextMixin
 from order.forms import ShippingAddressForm, BillingInfoForm
-from order.models import Order as OrderModel
-from order.secvices import Order
+from order.models import Order as OrderModel, PaymentMethod
+from order.services import Order
 from shop.views import BaseContextMixin
 
 
@@ -132,46 +132,47 @@ class OrderBillingView(BaseContextMixin, EmptyCartContextRedirectMixin, Template
         payment_method = data.get("pm")
 
         # Save payment method in session
-        order.set_pm(payment_method)
+        is_correct_pm = order.set_pm(payment_method)
 
-        # Check payment method
-        if payment_method == "paypal":
-            return JsonResponse(
-                {
-                    "status": "success",
-                    "message": reverse_lazy("order_create_page"),
-                },
-                status=200,
-            )
-        elif payment_method == "card":
-            # Bind the billing form with the JSON data
-            billing_form = BillingInfoForm(data)
+        if is_correct_pm:
+            # Check payment method
+            if payment_method == PaymentMethod.CARD:
+                # Bind the billing form with the JSON data
+                billing_form = BillingInfoForm(data)
 
-            if billing_form.is_valid():
-                # Save billing info in session
-                order.set_bi(billing_form.cleaned_data)
+                if billing_form.is_valid():
+                    # Save billing info in session
+                    order.set_bi(billing_form.cleaned_data)
 
+                    return JsonResponse(
+                        {
+                            "status": "success",
+                            "message": reverse_lazy("order_create_page"),
+                        },
+                        status=200,
+                    )
+                else:
+                    message = "Billing form is invalid \n"
+
+                    for field_name, errors in billing_form.errors.items():
+                        message += f"\n • {field_name}: {errors[0]}"
+
+                    messages.error(self.request, message)
+
+                    return JsonResponse(
+                        {
+                            "status": "error",
+                            "message": message,
+                        },
+                        status=400,
+                    )
+            else:
                 return JsonResponse(
                     {
                         "status": "success",
                         "message": reverse_lazy("order_create_page"),
                     },
                     status=200,
-                )
-            else:
-                message = "Billing form is invalid \n"
-
-                for field_name, errors in billing_form.errors.items():
-                    message += f"\n • {field_name}: {errors[0]}"
-
-                messages.error(self.request, message)
-
-                return JsonResponse(
-                    {
-                        "status": "error",
-                        "message": message,
-                    },
-                    status=400,
                 )
         else:
             message = "Payment method not available"
@@ -199,6 +200,7 @@ class OrderBillingView(BaseContextMixin, EmptyCartContextRedirectMixin, Template
 
         context["shipping_form"] = ShippingAddressForm(shipping_info or None)
         context["billing_form"] = BillingInfoForm(billing_info or None)
+        context["pyment_methods"] = PaymentMethod
 
         if self.request.user.is_authenticated:
             profile = self.request.user.profile
@@ -266,11 +268,14 @@ class OrderCreateView(BaseContextMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         if self.invoice:
-            # Get Order
-            order = OrderModel.objects.get(invoice=self.invoice)
+            # Get Order Service
+            order = Order(self.request)
 
-            if order:
-                context["order_id"] = order.id
+            # Get Order Model
+            order_m = OrderModel.objects.get(invoice=self.invoice)
+
+            if order_m:
+                context["order_id"] = order_m.id
 
             # Add form to payment to context
             pass

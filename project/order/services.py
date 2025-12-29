@@ -1,13 +1,10 @@
 import logging
-from typing import Literal
 
 from cart.services import Cart
 from order.models import Order as OrderModel, OrderItem, PaymentMethod
 
 # Logger
 logger = logging.getLogger(__name__)
-
-TPaymentMethod = Literal["paypal", "card"]
 
 
 class Order:
@@ -17,12 +14,9 @@ class Order:
     _bi_key = "session_billing_info_key"
 
     # Values
-    _pm: TPaymentMethod | None = None
+    _pm: PaymentMethod | None = None
     _si: dict | None = None
     _bi: dict | None = None
-
-    # Available payment methods
-    _available_pms: list[TPaymentMethod] = ["paypal", "card"]
 
     def __init__(self, request) -> None:
         self._session = request.session
@@ -41,7 +35,7 @@ class Order:
 
             self.__setattr__(atr, val)
 
-    def get_pm(self) -> TPaymentMethod | None:
+    def get_pm(self) -> PaymentMethod | None:
         """Get the payment method of this order"""
         return self._pm
 
@@ -53,10 +47,14 @@ class Order:
         """Set the billing info of this order"""
         return self._bi
 
-    def set_pm(self, value: TPaymentMethod) -> None:
+    def set_pm(self, value: PaymentMethod) -> bool:
         """Set the payment method for this order"""
-        if value in self._available_pms:
+        if value in PaymentMethod.values:
             self._pm = self._session[self._pm_key] = value
+
+            return True
+
+        return False
 
     def set_si(self, value: dict) -> None:
         """Set the shipping info for this order"""
@@ -66,15 +64,18 @@ class Order:
         """Set the billing info for this order"""
         self._bi = self._session[self._bi_key] = value
 
-    def clean(self):
+    def clean(self, except_bi: bool = False) -> None:
         """Clean Order session data"""
         del self._session[self._pm_key]
         del self._session[self._si_key]
-        del self._session[self._bi_key]
 
         self._pm = None
         self._si = None
-        self._bi = None
+
+        if not except_bi:
+            del self._session[self._bi_key]
+
+            self._bi = None
 
     def create(self) -> str | None:
         # Get Cart Session
@@ -85,12 +86,6 @@ class Order:
 
         # Get Payment Method
         pm = self.get_pm()
-
-        # Change Payment Method from label to value
-        for p in PaymentMethod:
-            if p.label.lower() == pm:
-                pm = p.value
-                break
 
         # Get Shipping Info
         si = self.get_si()
@@ -148,7 +143,7 @@ class Order:
                 return None
             else:
                 # Clean Order Session
-                self.clean()
+                self.clean(except_bi=True)
 
                 # Clean Cart Session
                 cart.clean()
