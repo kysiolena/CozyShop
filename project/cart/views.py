@@ -6,7 +6,6 @@ from django.views import View
 from django.views.generic import TemplateView
 
 from cart.services import Cart
-from catalog.models import Product
 from shop.views import BaseContextMixin
 
 
@@ -14,50 +13,13 @@ class CartContextMixin:
     def get_context_data(self, **kwargs):
         cart = Cart(self.request)
 
-        # Get Cart ids
-        cart_ids = cart.get_ids()
-
-        # Get Products info related to Cart items
-        products = Product.objects.filter(id__in=cart_ids)
-
-        # Total Cart
-        total_price = 0
-        total_sale_price = 0
-
-        # Create full Cart items
-        cart_item_full = []
-        for product in products:
-            item = cart.get_item(product.id)
-
-            if item:
-                # Calculate total item price
-                total_item_price = product.price * item["quantity"]
-                # Without sale total item price and total item sale price are equal
-                total_item_sale_price = total_item_price
-
-                if product.sale_price:
-                    total_item_sale_price = product.sale_price * item["quantity"]
-
-                # Add total item price to total cart price
-                total_price += total_item_price
-                # Add total item sale price to total cart sale price
-                total_sale_price += total_item_sale_price
-
-                # Combine full cart item dict
-                cart_item_full.append(
-                    {
-                        "product": product,
-                        "quantity": item["quantity"],
-                        "total_price": round(total_item_price, 2),
-                        "total_sale_price": round(total_item_sale_price, 2),
-                    }
-                )
+        cart_full_info = cart.get_full_info()
 
         context = super().get_context_data(**kwargs)
 
-        context["cart_items"] = cart_item_full
-        context["total_price"] = round(total_price, 2)
-        context["total_sale_price"] = round(total_sale_price, 2)
+        context["cart_items"] = cart_full_info["cart_items"]
+        context["total_price"] = cart_full_info["total_price"]
+        context["total_sale_price"] = cart_full_info["total_sale_price"]
 
         return context
 

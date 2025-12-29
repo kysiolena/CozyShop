@@ -2,6 +2,8 @@ import json
 import logging
 from typing import TypedDict
 
+from catalog.models import Product
+
 # Logger
 logger = logging.getLogger(__name__)
 
@@ -9,6 +11,19 @@ logger = logging.getLogger(__name__)
 class TCartItem(TypedDict):
     product_id: int
     quantity: int
+
+
+class TCartItemFull(TypedDict):
+    product: Product
+    quantity: int
+    total_price: float
+    total_sale_price: float
+
+
+class TCartInfo(TypedDict):
+    cart_items: list[TCartItemFull]
+    total_price: float
+    total_sale_price: float
 
 
 class Cart:
@@ -248,6 +263,52 @@ class Cart:
             logger.error(f"Failed to sync local Cart with Profile Cart: {e}")
 
             return False
+
+    def get_full_info(self) -> TCartInfo:
+        # Get Cart ids
+        cart_ids = self.get_ids()
+
+        # Get Products info related to Cart items
+        products = Product.objects.filter(id__in=cart_ids)
+
+        # Total Cart
+        total_price = 0
+        total_sale_price = 0
+
+        # Create full Cart items
+        cart_item_full = []
+        for product in products:
+            item = self.get_item(product.id)
+
+            if item:
+                # Calculate total item price
+                total_item_price = product.price * item["quantity"]
+                # Without sale total item price and total item sale price are equal
+                total_item_sale_price = total_item_price
+
+                if product.sale_price:
+                    total_item_sale_price = product.sale_price * item["quantity"]
+
+                # Add total item price to total cart price
+                total_price += total_item_price
+                # Add total item sale price to total cart sale price
+                total_sale_price += total_item_sale_price
+
+                # Combine full cart item dict
+                cart_item_full.append(
+                    {
+                        "product": product,
+                        "quantity": item["quantity"],
+                        "total_price": round(total_item_price, 2),
+                        "total_sale_price": round(total_item_sale_price, 2),
+                    }
+                )
+
+        return {
+            "cart_items": cart_item_full,
+            "total_price": round(total_price, 2),
+            "total_sale_price": round(total_sale_price, 2),
+        }
 
     def __len__(self):
         return len(self._cart)
