@@ -16,6 +16,12 @@
         {% else %}
             {% include 'catalog/blocks/button-catalog-simple.html' %}
         {% endif %}
+
+        {% if paypal_form %}
+            <div class="pt-4">
+                {{ paypal_form.render }}
+            </div>
+        {% endif %}
     {% elif error %}
         <p class="mb-4 d-flex align-items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="red"

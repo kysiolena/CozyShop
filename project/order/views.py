@@ -276,8 +276,16 @@ class OrderCreateView(BaseContextMixin, TemplateView):
             if order_m:
                 context["order_id"] = order_m.id
 
-            # Add form to payment to context
-            pass
+                if order_m.payment_method == PaymentMethod.PAY_PAL:
+                    # Create PayPal form
+                    paypal_form = order.create_paypal_form(order_m)
+
+                    if paypal_form:
+                        context["paypal_form"] = paypal_form
+
+                elif order_m.payment_method == PaymentMethod.CARD:
+                    # TO DO: Some logic for pay by card (maybe unnecessary)
+                    pass
 
         context["error"] = self.error
 
@@ -288,10 +296,53 @@ class PaymentSuccessView(BaseContextMixin, TemplateView):
     template_name = "order/payment-success.html"
     page_name = "Payment Success"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        invoice = kwargs.get("invoice")
+
+        if invoice:
+            # Get Order Model by Invoice
+            order_m = OrderModel.objects.get(invoice=invoice)
+
+            if order_m:
+                # Add Order ID to context
+                context["order_id"] = order_m.id
+
+                if order_m.payment_method == PaymentMethod.PAY_PAL:
+                    order = Order(self.request)
+
+                    # Create PayPal form
+                    paypal_form = order.create_paypal_form(order_m)
+
+                    if paypal_form:
+                        context["paypal_form"] = paypal_form
+
+                elif order_m.payment_method == PaymentMethod.CARD:
+                    # TO DO: Some logic for pay by card (maybe unnecessary)
+                    pass
+
+        return context
+
 
 class PaymentFailedView(BaseContextMixin, TemplateView):
     template_name = "order/payment-failed.html"
     page_name = "Payment Failed"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        invoice = kwargs.get("invoice")
+
+        if invoice:
+            # Get Order Model by Invoice
+            order_m = OrderModel.objects.get(invoice=invoice)
+
+            if order_m:
+                # Add Order ID to context
+                context["order_id"] = order_m.id
+
+        return context
 
 
 class OrderListView(RedirectNoAuthenticatedUserMixin, ProfileTabsMixin, TemplateView):

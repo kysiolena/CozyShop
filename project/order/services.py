@@ -1,5 +1,9 @@
 import logging
 
+from django.conf import settings
+from django.urls import reverse
+from paypal.standard.forms import PayPalPaymentsForm
+
 from cart.services import Cart
 from order.models import Order as OrderModel, OrderItem, PaymentMethod
 
@@ -150,3 +154,23 @@ class Order:
 
                 # Return invoice
                 return order.invoice
+
+    def create_paypal_form(self, order: OrderModel) -> PayPalPaymentsForm:
+        # Base URL
+        base_url = f"https://{self._request.get_host()}"
+
+        paypal_dict = {
+            "business": settings.PAYPAL_RECEIVER_EMAIL,
+            "amount": f"{order.amount_paid}",
+            "item_name": f"Order #{order.id}",
+            "no_shipping": "1",
+            "invoice": order.invoice,
+            "currency_code": "USD",
+            "notify_url": f"{base_url}{reverse("paypal-ipn")}",
+            "return_url": f"{base_url}{reverse("payment_success_page", kwargs={"invoice": order.invoice})}",
+            "cancel_return": f"{base_url}{reverse("payment_failed_page", kwargs={"invoice": order.invoice})}",
+        }
+
+        paypal_form = PayPalPaymentsForm(initial=paypal_dict)
+
+        return paypal_form

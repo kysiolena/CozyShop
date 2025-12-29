@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-import json
 import os
 from pathlib import Path
 
@@ -29,7 +28,12 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = str_to_bool(os.getenv("DEBUG"))
 
 ALLOWED_HOSTS = (
-    json.loads(os.getenv("ALLOWED_HOSTS")) if os.getenv("ALLOWED_HOSTS") else []
+    os.getenv("ALLOWED_HOSTS").split(",") if os.getenv("ALLOWED_HOSTS") else []
+)
+CSRF_TRUSTED_ORIGINS = (
+    os.getenv("CSRF_TRUSTED_ORIGINS").split(",")
+    if os.getenv("CSRF_TRUSTED_ORIGINS")
+    else []
 )
 
 # Application definition
