@@ -12,8 +12,10 @@ from django.views.generic import (
 )
 
 from authapp.views import ProfileTabsMixin, RedirectNoAuthenticatedUserMixin
+from cart.services import Cart
 from cart.views import CartContextMixin
 from order.forms import ShippingAddressForm, BillingInfoForm
+from order.secvices import Order
 from shop.views import BaseContextMixin
 
 
@@ -65,7 +67,10 @@ class OrderCheckoutView(BaseContextMixin, EmptyCartContextRedirectMixin, FormVie
         # Get the default initial data first
         initial = super().get_initial()
 
-        shipping_info = self.request.session.get("shipping_info")
+        order = Order(self.request)
+
+        # Get Shipping Info
+        shipping_info = order.get_si()
 
         # Update specific fields dynamically if session has shipping_info data
         if shipping_info:
@@ -75,8 +80,10 @@ class OrderCheckoutView(BaseContextMixin, EmptyCartContextRedirectMixin, FormVie
         return initial
 
     def form_valid(self, form):
+        order = Order(self.request)
+
         # Save form data to session
-        self.request.session["shipping_info"] = form.cleaned_data
+        order.set_si(form.cleaned_data)
 
         return super().form_valid(form)
 
@@ -85,11 +92,11 @@ class OrderBillingView(BaseContextMixin, EmptyCartContextRedirectMixin, Template
     template_name = "order/billing.html"
     page_name = "Billing"
 
-    # Available payment methods
-    pms_available = ["card", "paypal"]
-
     def get(self, request, *args, **kwargs):
-        shipping_info = self.request.session.get("shipping_info")
+        order = Order(self.request)
+
+        # Get Shipping Info
+        shipping_info = order.get_si()
 
         # Redirect to the Checkout Page if Shipping Info missed
         if not shipping_info:
@@ -103,7 +110,7 @@ class OrderBillingView(BaseContextMixin, EmptyCartContextRedirectMixin, Template
             return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        print(request.body)
+        order = Order(self.request)
 
         try:
             # Parse the raw JSON body
@@ -123,9 +130,8 @@ class OrderBillingView(BaseContextMixin, EmptyCartContextRedirectMixin, Template
 
         payment_method = data.get("pm")
 
-        if payment_method in self.pms_available:
-            # Save payment method in session
-            self.request.session["payment_method"] = payment_method
+        # Save payment method in session
+        order.set_pm(payment_method)
 
         # Check payment method
         if payment_method == "paypal":
@@ -141,11 +147,8 @@ class OrderBillingView(BaseContextMixin, EmptyCartContextRedirectMixin, Template
             billing_form = BillingInfoForm(data)
 
             if billing_form.is_valid():
-                # Service Pay by Card logic
-                print("Service Pay by Card logic", data)
-
                 # Save billing info in session
-                self.request.session["billing_info"] = billing_form.cleaned_data
+                order.set_bi(billing_form.cleaned_data)
 
                 return JsonResponse(
                     {
@@ -185,38 +188,50 @@ class OrderBillingView(BaseContextMixin, EmptyCartContextRedirectMixin, Template
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        shipping_info = self.request.session.get("shipping_info")
+        order = Order(self.request)
+
+        # Get Shipping Info
+        shipping_info = order.get_si()
+
+        # Get Billing Info
+        billing_info = order.get_bi()
 
         context["shipping_form"] = ShippingAddressForm(shipping_info or None)
-        context["billing_form"] = BillingInfoForm(self.request.POST or None)
+        context["billing_form"] = BillingInfoForm(billing_info or None)
 
         if self.request.user.is_authenticated:
             profile = self.request.user.profile
 
             context["billing_form"] = BillingInfoForm(
-                self.request.POST or None, instance=profile
+                billing_info or None, instance=profile
             )
-        else:
-            context["billing_form"] = BillingInfoForm(self.request.POST or None)
 
         return context
 
 
-class OrderCreateView(BaseContextMixin, EmptyCartContextRedirectMixin, TemplateView):
+class OrderCreateView(BaseContextMixin, TemplateView):
     template_name = "order/create-process.html"
     page_name = "Order Create"
     error = None
     invoice = None
 
     def get(self, request, *args, **kwargs):
-        shipping_info = self.request.session.get("shipping_info")
-        billing_info = self.request.session.get("billing_info")
-        payment_method = self.request.session.get("payment_method")
+        cart = Cart(self.request)
+        order = Order(self.request)
 
-        # Redirect to the Checkout Page if Payment Method or Shipping/Billing Info missed
+        # Get Payment Method and Shipping/Billing Info from Session
+        payment_method = order.get_pm()
+        shipping_info = order.get_si()
+        billing_info = order.get_bi()
+
+        # Redirect to the Checkout Page if:
+        # - Payment Method missed or
+        # - Shipping/Billing Info missed or
+        # - Cart is empty
         if (
             not shipping_info
             or not payment_method
+            or not cart.__len__()
             or (payment_method == "card" and not billing_info)
         ):
             messages.warning(
@@ -226,23 +241,24 @@ class OrderCreateView(BaseContextMixin, EmptyCartContextRedirectMixin, TemplateV
 
             return redirect("order_checkout_page")
 
+        # Get invoice (if it already exists)
         self.invoice = self.request.GET.get("invoice")
 
         if self.invoice:
-            # Display success or failure Order Create page
+            # Display success Order Create page
             self.error = False
 
             return super().get(request, *args, **kwargs)
         else:
-            # Create order and reload (TO DO)
-            # Clean session: cart, shipping/billing address, payment_method
-            self.error = False
-            self.invoice = "sadsfd-safdf-fsdf"
+            # Create order and reload
+            self.invoice = order.create()
 
-            if self.invoice and not self.error:
+            if self.invoice:
                 return redirect(f"{self.request.path}?invoice={self.invoice}")
 
-        # To failed page
+        self.error = True
+
+        # Display fail Order Create page
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
