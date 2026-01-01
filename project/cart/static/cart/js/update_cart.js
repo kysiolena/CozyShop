@@ -11,9 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
             mode: 'same-origin',
             body: JSON.stringify(data)
         })
-            .then(response => response.json())
-            .then(data => location.reload())
-            .catch(error => console.error('Error update cart:', error));
+            // .then(response => response.json())
+            // .then(data => location.reload())
+            // .catch(error => console.error('Error update cart:', error))
+            .finally(() => location.reload());
     };
 
     const cleanCart = (url) => {
@@ -25,9 +26,10 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             mode: 'same-origin',
         })
-            .then(response => response.json())
-            .then(data => location.reload())
-            .catch(error => console.error('Error clean cart:', error));
+            // .then(response => response.json())
+            // .then(data => location.reload())
+            // .catch(error => console.error('Error clean cart:', error))
+            .finally(() => location.reload());
     };
 
     // Cart Items
@@ -75,6 +77,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
             });
 
+            updateButton.textContent = "Updating cart...";
+            updateButton.disabled = true;
 
             updateCart(url, data);
         });
@@ -85,10 +89,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (cleanButton) {
         const url = cleanButton.dataset.url;
-        
+
         cleanButton.addEventListener("click", (e) => {
-            cleanCart(url);
+            if (confirm("Are you sure you want to clean the Cart?")) {
+                cleanButton.textContent = "Cleaning cart...";
+                cleanButton.disabled = true;
+
+                cleanCart(url);
+            }
         });
     }
-
 });

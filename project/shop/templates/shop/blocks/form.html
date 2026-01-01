@@ -1,0 +1,18 @@
+<form
+        {% if action %} action="{% url action %}" {% endif %}
+        {% if enctype %} enctype="{{ enctype }}" {% endif %}
+                        method="post"
+>
+    {% csrf_token %}
+
+    {% block form_fields %}
+        {% include 'shop/blocks/form-fields.html' %}
+    {% endblock %}
+
+    {% if not button_hidden %}
+        <button class="btn btn-{% if button_type %}{{ button_type }}{% else %}dark{% endif %}"
+                type="submit">
+            {{ button }}
+        </button>
+    {% endif %}
+</form>

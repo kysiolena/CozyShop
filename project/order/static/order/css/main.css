@@ -1,0 +1,9 @@
+/*#pm-card-content {*/
+/*    display: none;*/
+/*}*/
+
+/*#billing-card-body:has(input[id="pm-card"]:checked) {*/
+/*    #pm-card-content {*/
+/*        display: block;*/
+/*    }*/
+/*}*/

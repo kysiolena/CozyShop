@@ -10,11 +10,12 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             mode: 'same-origin',
         })
-            .then(response => response.json())
-            .then(data => {
-                location.reload()
-            })
-            .catch(error => console.error('Error delete from cart:', error));
+            // .then(response => response.json())
+            // .then(data => {
+            //     location.reload()
+            // })
+            // .catch(error => console.error('Error delete from cart:', error))
+            .finally(() => location.reload());
     };
 
     const deleteFromCartButtons = document.querySelectorAll(".delete-from-cart");
@@ -23,7 +24,11 @@ document.addEventListener("DOMContentLoaded", () => {
         deleteFromCartButton.addEventListener("click", (e) => {
             const url = deleteFromCartButton.dataset.url;
 
-            deleteCartItem(url);
+            if (confirm("Are you sure you want to delete product from the Cart?")) {
+                deleteFromCartButton.disabled = true;
+
+                deleteCartItem(url);
+            }
         });
     });
 });

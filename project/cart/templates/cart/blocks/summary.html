@@ -1,0 +1,27 @@
+<div class="pb-4">
+    <div class="card">
+        <div class="card-header">
+            Cart Summary
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for cart_item in cart_items %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <h5>{{ cart_item.product.name }}</h5>
+                    <p class="d-flex align-items-center justify-content-end gap-2">
+                        <b class="fs-4">{{ cart_item.quantity }}</b>
+                        x
+                        <span>
+                        {% include 'catalog/blocks/product-price.html' with price=cart_item.product.price sale_price=cart_item.product.sale_price %}
+                    </span>
+                    </p>
+                </li>
+            {% endfor %}
+        </ul>
+        <div class="card-footer d-flex justify-content-between align-items-center">
+            <b>Total:</b>
+            <b>{% include 'catalog/blocks/product-price.html' with price=total_price sale_price=total_sale_price %}</b>
+        </div>
+    </div>
+
+    <a href="{% url 'cart_page' %}" class="btn btn-light mt-2">Edit Cart Items</a>
+</div>

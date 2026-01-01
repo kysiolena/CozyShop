@@ -1,0 +1,14 @@
+{% extends "shop/layout/base.html" %}
+
+{% block main %}
+    <div class="row py-4">
+        <div class="col-3"></div>
+        <div class="col-6">
+            <h1 class="pb-4">{{ page_name }}</h1>
+
+            {% block content %}{% endblock %}
+        </div>
+        <div class="col-3"></div>
+    </div>
+
+{% endblock %}

@@ -25,8 +25,9 @@ from authapp.forms import (
     PasswordResetConfirmForm,
     PasswordResetForm,
     ProfileAvatarUpdateForm,
-    ProfileContactsUpdateForm,
+    ProfileBillingInfoUpdateForm,
 )
+from order.forms import ShippingAddressForm
 from shop.views import BaseContextMixin
 
 # Logger
@@ -258,7 +259,9 @@ class ProfileTabsMixin(BaseContextMixin):
         tabs = [
             {"name": "Main", "url": "profile_page"},
             {"name": "Avatar", "url": "profile_avatar_page"},
-            {"name": "Contacts", "url": "profile_contacts_page"},
+            {"name": "Billing Info", "url": "profile_billing_info_page"},
+            {"name": "Shipping Info", "url": "profile_shipping_info_page"},
+            {"name": "Orders", "url": "profile_orders_page"},
             {"name": "Delete", "url": "profile_delete_page"},
         ]
 
@@ -304,20 +307,36 @@ class ProfileAvatarUpdateView(
         return self.request.user.profile
 
 
-class ProfileContactsUpdateView(
+class ProfileBillingInfoUpdateView(
     RedirectNoAuthenticatedUserMixin, ProfileTabsMixin, SuccessMessageMixin, UpdateView
 ):
-    """View for update contacts profile avatar."""
+    """View for update profile Billing Info."""
 
-    template_name = "authapp/profile-contacts.html"
-    page_name = "Contacts Profile"
-    form_class = ProfileContactsUpdateForm
-    success_url = reverse_lazy("profile_contacts_page")
-    success_message = "Your profile contacts have been updated successfully!"
+    template_name = "authapp/profile-billing-info.html"
+    page_name = "Billing Info Profile"
+    form_class = ProfileBillingInfoUpdateForm
+    success_url = reverse_lazy("profile_billing_info_page")
+    success_message = "Your profile billing info has been updated successfully!"
 
     def get_object(self, queryset=None):
         """Return the Profile instance associated with the current user."""
         return self.request.user.profile
+
+
+class ProfileShippingInfoUpdateView(
+    RedirectNoAuthenticatedUserMixin, ProfileTabsMixin, SuccessMessageMixin, UpdateView
+):
+    """View for update profile Shipping Info."""
+
+    template_name = "authapp/profile-shipping-info.html"
+    page_name = "Shipping Info Profile"
+    form_class = ShippingAddressForm
+    success_url = reverse_lazy("profile_shipping_info_page")
+    success_message = "Your profile shipping info has been updated successfully!"
+
+    def get_object(self, queryset=None):
+        """Return the Shipping Address instance associated with the current user."""
+        return self.request.user.shipping_address
 
 
 class ProfileDeleteView(

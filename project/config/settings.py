@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-import json
 import os
 from pathlib import Path
 
@@ -29,7 +28,12 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = str_to_bool(os.getenv("DEBUG"))
 
 ALLOWED_HOSTS = (
-    json.loads(os.getenv("ALLOWED_HOSTS")) if os.getenv("ALLOWED_HOSTS") else []
+    os.getenv("ALLOWED_HOSTS").split(",") if os.getenv("ALLOWED_HOSTS") else []
+)
+CSRF_TRUSTED_ORIGINS = (
+    os.getenv("CSRF_TRUSTED_ORIGINS").split(",")
+    if os.getenv("CSRF_TRUSTED_ORIGINS")
+    else []
 )
 
 # Application definition
@@ -42,10 +46,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_css_inline",
+    "paypal.standard.ipn",
     "shop",
     "authapp",
     "catalog",
     "cart",
+    "order",
 ]
 
 MIDDLEWARE = [
@@ -151,3 +157,7 @@ EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = str_to_int(os.getenv("EMAIL_PORT"))
+
+# PayPal
+PAYPAL_TEST = str_to_bool(os.getenv("PAYPAL_TEST"))
+PAYPAL_RECEIVER_EMAIL = os.getenv("PAYPAL_RECEIVER_EMAIL")

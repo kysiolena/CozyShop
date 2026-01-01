@@ -14,11 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 quantity: +quantity
             })
         })
-            .then(response => response.json())
-            .then(data => {
-                location.reload()
-            })
-            .catch(error => console.error('Error add to cart:', error));
+            // .then(response => response.json())
+            // .then(data => {
+            //     location.reload()
+            // })
+            // .catch(error => console.error('Error add to cart:', error))
+            .finally(() => location.reload());
     };
 
     const addToCartButtons = document.querySelectorAll(".add-to-cart");
@@ -27,6 +28,9 @@ document.addEventListener("DOMContentLoaded", () => {
         addToCartButton.addEventListener("click", (e) => {
             const prodId = addToCartButton.dataset.product;
             const prodQuantity = addToCartButton.dataset.quantity;
+
+            addToCartButton.textContent = "Adding to cart...";
+            addToCartButton.disabled = true;
 
             addCartItem(prodId, prodQuantity);
         });
