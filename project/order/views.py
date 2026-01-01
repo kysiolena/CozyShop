@@ -6,8 +6,8 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import (
     TemplateView,
-    DetailView,
     FormView,
+    ListView,
 )
 
 from authapp.views import ProfileTabsMixin, RedirectNoAuthenticatedUserMixin
@@ -348,11 +348,19 @@ class PaymentFailedView(BaseContextMixin, TemplateView):
         return context
 
 
-class OrderListView(RedirectNoAuthenticatedUserMixin, ProfileTabsMixin, TemplateView):
+class OrderListView(RedirectNoAuthenticatedUserMixin, ProfileTabsMixin, ListView):
     template_name = "authapp/profile-orders.html"
     page_name = "Orders' List"
+    model = OrderModel
+    paginate_by = 3
 
-
-class OrderReadView(BaseContextMixin, DetailView):
-    template_name = "authapp/profile-orders.html"
-    page_name = "Orders' List"
+    def get_queryset(self):
+        # Filter the queryset to only include orders where the 'user' field
+        # matches the currently logged-in user.
+        return (
+            super()
+            .get_queryset()
+            .filter(user=self.request.user)
+            .prefetch_related("order_items")
+            .order_by("-created_at")
+        )

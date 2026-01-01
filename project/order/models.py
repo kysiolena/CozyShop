@@ -81,10 +81,26 @@ class Order(TimeStampedModel):
     def __str__(self):
         return f"Order - {self.id}"
 
+    def status_info(self):
+        if self.status == Status.COMPLETED:
+            return {"label": Status.COMPLETED.label, "style": "success"}
+        elif self.status == Status.WAIT_PAYMENT:
+            return {"label": Status.WAIT_PAYMENT.label, "style": "primary"}
+        elif self.status == Status.PAID:
+            return {"label": Status.PAID.label, "style": "dark"}
+        elif self.status == Status.CANCELLED:
+            return {"label": Status.CANCELLED.label, "style": "danger"}
+        else:
+            return {"label": Status.PENDING.label, "style": "secondary"}
+
 
 class OrderItem(TimeStampedModel):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE, related_name="order_items"
+    )
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="products"
+    )
     quantity = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=8, decimal_places=2)
 

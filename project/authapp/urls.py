@@ -15,7 +15,7 @@ from authapp.views import (
     ProfileBillingInfoUpdateView,
     ProfileShippingInfoUpdateView,
 )
-from order.views import OrderListView, OrderReadView
+from order.views import OrderListView
 
 urlpatterns = [
     path("sign-in/", SignInView.as_view(), name="sign_in_page"),
@@ -48,11 +48,6 @@ urlpatterns = [
         name="profile_shipping_info_page",
     ),
     path("profile/orders/", OrderListView.as_view(), name="profile_orders_page"),
-    path(
-        "profile/orders/<int:order_id>",
-        OrderReadView.as_view(),
-        name="profile_order_detail_page",
-    ),
     path("profile/delete/", ProfileDeleteView.as_view(), name="profile_delete_page"),
     path(
         "profile/delete/confirm/<uidb64>/<token>/",

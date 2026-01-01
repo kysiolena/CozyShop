@@ -1,0 +1,61 @@
+<table class="table text-center">
+    <colgroup>
+        <col style="width: 2%;">
+        <col style="width: 10%;">
+        <col style="width: 25%;">
+        <col style="width: 20%;">
+        <col style="width: 25%;">
+        <col style="width: 18%;">
+    </colgroup>
+    <thead class="table-light">
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Photo</th>
+        <th scope="col">Title</th>
+        <th scope="col">Price</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">TotalPrice</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for order_item in order.order_items.all %}
+        {% url 'product_page' slug=order_item.product.slug as prod_url %}
+
+        <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>
+                <a href="{{ prod_url }}" class="d-flex" style="height: 60px">
+                    {% include 'catalog/blocks/product-image.html' with product=order_item.product %}
+                </a>
+            </td>
+            <td>
+                <a href="{{ prod_url }}">{{ order_item.product.name }}</a>
+            </td>
+            <td>
+                {% include 'catalog/blocks/product-price.html' with price=order_item.product.price sale_price=order_item.product.sale_price %}
+            </td>
+            <td>
+                {{ order_item.quantity }}
+            </td>
+            <td>
+                <b>
+                    {% include 'catalog/blocks/product-price.html' with price=order_item.price sale_price=order_item.price %}
+                </b>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    <tfoot class="table-light">
+    <tr>
+        <th scope="col" colspan="2" class="text-start">Total:</th>
+        <th scope="col" colspan="2" class="text-start">
+            {% include 'catalog/blocks/product-price.html' with price=order.amount_paid sale_price=order.amount_paid %}
+        </th>
+        <th scope="col" colspan="3" class="text-end">
+            {% if order.payment %}
+
+            {% endif %}
+        </th>
+    </tr>
+    </tfoot>
+</table>
