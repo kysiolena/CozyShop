@@ -10,6 +10,13 @@
         Your order <b>#{{ order_id }}</b> has been successfully paid!
     </p>
 
+    {% if payment_method == 'PP' %}
+        <p class="mb-4">
+            Thank you for your payment. Your transaction has been completed, and a receipt for your purchase has been
+            emailed to you. Log into your PayPal account to view transaction details.
+        </p>
+    {% endif %}
+
     {% if user.is_authenticated %}
         {% include 'authapp/blocks/button-see-order-details.html' %}
     {% else %}

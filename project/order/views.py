@@ -309,18 +309,8 @@ class PaymentSuccessView(BaseContextMixin, TemplateView):
                 # Add Order ID to context
                 context["order_id"] = order_m.id
 
-                if order_m.payment_method == PaymentMethod.PAY_PAL:
-                    order = Order(self.request)
-
-                    # Create PayPal form
-                    paypal_form = order.create_paypal_form(order_m)
-
-                    if paypal_form:
-                        context["paypal_form"] = paypal_form
-
-                elif order_m.payment_method == PaymentMethod.CARD:
-                    # TO DO: Some logic for pay by card (maybe unnecessary)
-                    pass
+                # Add payment_method context
+                context["payment_method"] = order_m.payment_method
 
         return context
 
@@ -341,6 +331,19 @@ class PaymentFailedView(BaseContextMixin, TemplateView):
             if order_m:
                 # Add Order ID to context
                 context["order_id"] = order_m.id
+
+                if order_m.payment_method == PaymentMethod.PAY_PAL:
+                    order = Order(self.request)
+
+                    # Create PayPal form
+                    paypal_form = order.create_paypal_form(order_m)
+
+                    if paypal_form:
+                        context["paypal_form"] = paypal_form
+
+                elif order_m.payment_method == PaymentMethod.CARD:
+                    # TO DO: Some logic for pay by card (maybe unnecessary)
+                    pass
 
         return context
 
