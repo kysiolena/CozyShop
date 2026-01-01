@@ -37,8 +37,8 @@
 6. [x] Add Authorization (forms, views, templates, email verification)
 7. [x] Add Profile (model, form, views, templates)
 8. [x] Add Cart functionality
-9. [ ] Add Order (model, form, views, templates)
-10. [ ] Add Payment logic (PayPal sandbox)
+9. [x] Add Order (model, form, views, templates)
+10. [x] Add Payment logic (PayPal sandbox)
 11. [ ] Add Comment (model, form, view, template)
 12. [ ] Add Subscription (Celery)
 13. [ ] Add InfoTable (WebSocket)
