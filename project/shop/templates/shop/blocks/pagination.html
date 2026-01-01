@@ -1,6 +1,6 @@
 {% load shop.filters %}
 
-<nav aria-label="pagination">
+<nav aria-label="pagination" class="{% if not page_obj.has_previous and not page_obj.has_next %}d-none{% endif %}">
     <ul class="pagination">
         <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
             <a

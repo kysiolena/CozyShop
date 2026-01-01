@@ -50,23 +50,3 @@ class Product(TimeStampedModel):
             return round(self.price - (self.price * self.sale), 2)
         else:
             return None
-
-
-class ProductReview(TimeStampedModel):
-    name = models.CharField(max_length=100)
-    description = models.TextField(max_length=500)
-    image = models.ImageField(upload_to="reviews/", null=True, blank=True)
-
-    product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name="reviews"
-    )
-
-    def __str__(self):
-        return f"{self.id} - {self.product.name}"
-
-    @property
-    def img(self):
-        if self.image:
-            return self.image.url
-        else:
-            return None

@@ -1,42 +1,37 @@
 {% extends "shop/layout/base.html" %}
 
-{% load filters %}
+{% load catalog.filters %}
 
 {% block main %}
     <div class="row pt-4">
         <div class="col-12">
-            <div class="card text-bg-dark">
+            <div class="card text-center text-bg-dark">
                 <div style="width: 100%; height: 276px; overflow: hidden">
                     {% include 'catalog/blocks/product-image.html' with class='card-img' %}
                 </div>
                 <div class="card-img-overlay">
                     <h5 class="card-title">{{ product.name }}</h5>
 
-                    <ul class="list-group list-group-flush">
+                    <ul class="list-group w-50 m-auto">
                         <li class="list-group-item">
-                            {% if product.in_stock %}
-                                <span class="badge text-bg-success">In Stock</span>
-                            {% else %}
-                                <span class="badge text-bg-danger">Out Of Stock</span>
-                            {% endif %}
+                            {% include 'catalog/blocks/stock.html' %}
                         </li>
                         <li class="list-group-item">
-                            Price:
                             {% include 'catalog/blocks/product-price.html' with price=product.price sale_price=product.sale_price %}
                         </li>
                         <li class="list-group-item">
-                            Categories: |
-                            {% for category in categories %}
-                                <a class="badge text-bg-info text-decoration-none"
+                            {% include 'catalog/blocks/cart.html' %}
+                        </li>
+                        <li class="list-group-item">
+                            {% for category in product.categories.all %}
+                                <a class="badge text-bg-primary text-decoration-none"
                                    href="{% url 'category_page' slug=category.slug %}"
                                 >
                                     {{ category.name }}
-                                </a> |
+                                </a>
                             {% endfor %}
                         </li>
-
                     </ul>
-
                 </div>
             </div>
         </div>
@@ -52,14 +47,6 @@
                     {{ product.description }}
                 </p>
             {% endif %}
-        </div>
-        <div class="col-2"></div>
-    </div>
-
-    <div class="row mt-4">
-        <div class="col-2"></div>
-        <div class="col-8">
-            {% include "./blocks/product-reviews.html" %}
         </div>
         <div class="col-2"></div>
     </div>
