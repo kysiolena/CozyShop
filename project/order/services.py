@@ -5,7 +5,7 @@ from django.urls import reverse
 from paypal.standard.forms import PayPalPaymentsForm
 
 from cart.services import Cart
-from order.models import Order as OrderModel, OrderItem, PaymentMethod
+from order.models import Order as OrderModel, OrderItem, PaymentMethod, Status
 
 # Logger
 logger = logging.getLogger(__name__)
@@ -113,6 +113,10 @@ class Order:
             "amount_paid": cart_full_info["total_sale_price"],
             "payment_method": pm,
         }
+
+        if pm == PaymentMethod.PAY_PAL:
+            # Set Order Status to WAIT_PAYMENT
+            order_data["status"] = Status.WAIT_PAYMENT
 
         if self._request.user.is_authenticated:
             order_data["user_id"] = self._request.user.id

@@ -14,5 +14,7 @@
         <div class="pt-4">
             {{ paypal_form.render }}
         </div>
+    {% else %}
+        <p class="pt-4" style="color: red">!!! SELECTED PAYMENT METHOD DURING THE DEVELOPMENT PROCESS !!!</p>
     {% endif %}
 {% endblock %}

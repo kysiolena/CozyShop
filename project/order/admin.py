@@ -19,7 +19,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ("id", "status", "payment_method", "created_at", "updated_at")
     list_filter = ("status",)
     search_fields = ("id",)
-    readonly_fields = ("payment_method", "created_at", "updated_at")
+    readonly_fields = ("invoice", "payment_method", "created_at", "updated_at")
 
 
 admin.site.register(Order, OrderAdmin)
