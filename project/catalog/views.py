@@ -1,3 +1,4 @@
+from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView
 
 from catalog.models import Product, Category
@@ -24,11 +25,23 @@ class CatalogView(BaseContextMixin, CategoriesContextMixin, ListView):
     paginate_by = 9
     ordering = "-created_at"
 
+    def get_breadcrumbs(self):
+        # Define breadcrumbs as a list of (name, url) tuples
+        return [("Home", reverse_lazy("shop_page")), (self.page_name, None)]
+
 
 class CategoryView(BaseContextMixin, CategoriesContextMixin, ListView):
     template_name = "catalog/category.html"
     model = Product
     paginate_by = 9
+
+    def get_breadcrumbs(self):
+        # Define breadcrumbs as a list of (name, url) tuples
+        return [
+            ("Home", reverse_lazy("shop_page")),
+            ("Catalog", reverse_lazy("catalog_page")),
+            (self.page_name, None),
+        ]
 
     def get_queryset(self):
         # Get Category slug
@@ -63,6 +76,14 @@ class ProductView(BaseContextMixin, DetailView):
     model = Product
     slug_field = "slug"
     slug_url_kwarg = "slug"
+
+    def get_breadcrumbs(self):
+        # Define breadcrumbs as a list of (name, url) tuples
+        return [
+            ("Home", reverse_lazy("shop_page")),
+            ("Catalog", reverse_lazy("catalog_page")),
+            (self.page_name, None),
+        ]
 
     def get_queryset(self):
         return super().get_queryset().prefetch_related("categories")

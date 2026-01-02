@@ -2,6 +2,9 @@
 
 {% block main %}
     <div class="row pt-4">
+        <h1 class="visually-hidden">{{ page_name }}</h1>
+
+        {% include 'shop/blocks/breadcrumbs.html' %}
 
         <div class="col-3">
             {% include "catalog/blocks/categories.html" %}
