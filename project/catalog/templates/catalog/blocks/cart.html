@@ -1,0 +1,5 @@
+{% if product.id in cart.get_ids %}
+    {% include 'cart/blocks/button-added.html' with class='flex-grow-1' %}
+{% else %}
+    {% include 'cart/blocks/button-add.html' with class='flex-grow-1' %}
+{% endif %}

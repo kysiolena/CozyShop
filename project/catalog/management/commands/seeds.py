@@ -45,6 +45,7 @@ class Command(BaseCommand):
                     "sale": p["sale"],
                     "in_stock": p["in_stock"],
                     "image": p["image"],
+                    "description": p.get("description", None),
                 }
             )
             for p in PRODUCTS
@@ -53,15 +54,17 @@ class Command(BaseCommand):
 
     @staticmethod
     def bulk_insert_category_product() -> None:
+        products_ids = [p["id"] for p in Product.objects.all().values("id")]
+        categories_ids = [c["id"] for c in Category.objects.all().values("id")]
+
         categories_products = [
             Product.categories.through(
-                product_id=p.id,
-                category_id=[
-                    p_fake["category_id"] for p_fake in PRODUCTS if p_fake["id"] == p.id
-                ][0],
+                product_id=p,
+                category_id=random.choice(categories_ids),
             )
-            for p in Product.objects.all()
+            for p in products_ids
         ]
+
         Product.categories.through.objects.bulk_create(categories_products)
 
     def seed_db(self):

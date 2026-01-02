@@ -1,0 +1,22 @@
+{% load catalog.filters %}
+
+<div class="row mb-4">
+    {% if page_obj|length %}
+        {% for product in page_obj %}
+            <div class="col-{{ col|default:4 }} mb-4">
+                {% include 'catalog/blocks/product-card.html' %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="col-12">
+            No products found.
+        </p>
+    {% endif %}
+
+    <div class="col-12">
+        {% include 'shop/blocks/pagination.html' %}
+    </div>
+</div>
+
+
+

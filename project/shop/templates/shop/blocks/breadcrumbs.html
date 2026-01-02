@@ -1,0 +1,15 @@
+{% if breadcrumbs|length %}
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb pb-2 border-bottom">
+                {% for name, url in breadcrumbs %}
+                    {% if url %}
+                        <li class="breadcrumb-item"><a href="{{ url }}">{{ name }}</a></li>
+                    {% else %}
+                        <li class="breadcrumb-item active" aria-current="page">{{ name }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+        </nav>
+    </div>
+{% endif %}

@@ -1,147 +1,119 @@
-from django.core.paginator import Paginator
-from django.db.models import QuerySet
-from django.views.generic import TemplateView
+from django.db.models import Q
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView
 
-from catalog.forms import ProductReviewForm
-from catalog.models import Product, Category, ProductReview
+from catalog.models import Product, Category
 from shop.views import BaseContextMixin
 
 
-class ProductMixin:
-    @staticmethod
-    def get_products_rows(products_set: QuerySet, products_in_row=3):
-        paginator = Paginator(products_set, products_in_row)
-
-        rows = [
-            paginator.page(page_number).object_list
-            for page_number in paginator.page_range
-        ]
-
-        return rows
-
-
-class CatalogView(BaseContextMixin, ProductMixin, TemplateView):
-    template_name = "catalog/index.html"
-    page_name = "Catalog"
+class CategoriesContextMixin:
 
     def get_context_data(self, **kwargs):
-        # Products
-        products_set = Product.objects.all()
-        # Products by rows
-        rows = self.get_products_rows(products_set)
-
         # Categories
-        categories_set = Category.objects.all()
+        categories = Category.objects.all()
 
         context = super().get_context_data(**kwargs)
 
-        context["rows"] = rows
-        context["categories"] = categories_set
+        context["categories"] = categories
 
         return context
 
 
-class CategoryView(BaseContextMixin, ProductMixin, TemplateView):
+class CatalogView(BaseContextMixin, CategoriesContextMixin, ListView):
+    template_name = "catalog/index.html"
+    page_name = "Catalog"
+    model = Product
+    paginate_by = 9
+    ordering = "-created_at"
+
+    def get_breadcrumbs(self):
+        # Define breadcrumbs as a list of (name, url) tuples
+        return [("Home", reverse_lazy("shop_page")), (self.page_name, None)]
+
+
+class CategoryView(BaseContextMixin, CategoriesContextMixin, ListView):
     template_name = "catalog/category.html"
+    model = Product
+    paginate_by = 9
+
+    def get_breadcrumbs(self):
+        # Define breadcrumbs as a list of (name, url) tuples
+        return [
+            ("Home", reverse_lazy("shop_page")),
+            ("Catalog", reverse_lazy("catalog_page")),
+            (self.page_name, None),
+        ]
+
+    def get_queryset(self):
+        # Get Category slug
+        slug = self.kwargs.get("slug")
+
+        return (
+            super()
+            .get_queryset()
+            .filter(categories__slug__contains=slug)
+            .order_by("-created_at")
+        )
 
     def get_context_data(self, **kwargs):
+        # Get Category slug
         slug = self.kwargs.get("slug")
 
         # Category
         category = Category.objects.get(slug=slug)
 
+        # Set Page Name
         self.page_name = category.name
-
-        # Products by rows
-        rows = self.get_products_rows(category.products.all())
-
-        # Categories
-        categories_set = Category.objects.all()
 
         context = super().get_context_data(**kwargs)
 
         context["category"] = category
-        context["rows"] = rows
-        context["categories"] = categories_set
 
         return context
 
 
-class ProductView(BaseContextMixin, TemplateView):
+class ProductView(BaseContextMixin, DetailView):
     template_name = "catalog/product.html"
+    model = Product
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
 
-    def get_context_data(self, **kwargs):
-        slug = self.kwargs.get("slug")
+    def get_breadcrumbs(self):
+        # Define breadcrumbs as a list of (name, url) tuples
+        return [
+            ("Home", reverse_lazy("shop_page")),
+            ("Catalog", reverse_lazy("catalog_page")),
+            (self.page_name, None),
+        ]
 
-        # Product
-        product = Product.objects.get(slug=slug)
-
-        self.page_name = product.name
-
-        # Product Categories
-        categories_set = product.categories.all()
-
-        # Product Reviews
-        reviews_set = product.reviews.all()
-
-        context = super().get_context_data(**kwargs)
-
-        context["product"] = product
-        context["categories"] = categories_set
-        context["reviews"] = reviews_set
-
-        return context
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related("categories")
 
 
-class ProductReviewView(BaseContextMixin, TemplateView):
-    template_name = "catalog/product-review.html"
+class SearchView(BaseContextMixin, ListView):
+    template_name = "catalog/search.html"
+    model = Product
+    paginate_by = 12
+    ordering = "-created_at"
 
-    def get_context_data(self, **kwargs):
-        product_slug = self.kwargs.get("slug")
-        review_id = self.kwargs.get("review_id")
+    def get_breadcrumbs(self):
+        # Define breadcrumbs as a list of (name, url) tuples
+        return [
+            ("Home", reverse_lazy("shop_page")),
+            ("Catalog", reverse_lazy("catalog_page")),
+            (self.page_name, None),
+        ]
 
-        # Product
-        product = Product.objects.get(slug=product_slug)
+    def get_queryset(self):
+        # Get search parameter
+        search = self.request.GET.get("search") or ""
 
-        self.page_name = f"Review for «{product.name}»"
+        # Set Page Name
+        self.page_name = f"Search results for «{search}»"
 
-        # Product Review
-        product_review = ProductReview.objects.get(id=review_id) if review_id else None
-
-        form = ProductReviewForm(product_review)
-
-        context = super().get_context_data(**kwargs)
-
-        context["product_slug"] = product.slug
-        context["review"] = product_review
-        context["form"] = form
-
-        return context
-
-    def post(self, request, *args, **kwargs):
-        product_slug = self.kwargs.get("slug")
-        review_id = self.kwargs.get("review_id")
-
-        # Product
-        product = Product.objects.get(slug=product_slug)
-
-        self.page_name = f"Review for «{product.name}»"
-
-        # Product Review
-        product_review = ProductReview.objects.get(id=review_id) if review_id else None
-
-        form = ProductReviewForm(request.POST or None, request.FILES or None)
-
-        context = super().get_context_data(**kwargs)
-
-        if form.is_valid():
-            form.save(product_slug)
-            context["form"] = ProductReviewForm()
-            context["message"] = "Your review was successfully created!"
-        else:
-            context["form"] = form
-
-        context["product_slug"] = product_slug
-        context["review"] = product_review
-
-        return self.render_to_response(context)
+        return (
+            super()
+            .get_queryset()
+            .filter(Q(name__icontains=search) | Q(description__icontains=search))
+            .order_by("-created_at")
+        )

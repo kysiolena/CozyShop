@@ -85,6 +85,7 @@ PRODUCTS = [
         "price": 59.99,
         "sale": 0.15,
         "in_stock": True,
+        "description": "Enjoy the winter season with a stylish cup of tea. Perfect for cozy mornings and relaxing evenings. Like and follow us for more!",
     },
     {
         "id": 3,
@@ -136,6 +137,7 @@ PRODUCTS = [
         "price": 34.99,
         "sale": 0.00,
         "in_stock": True,
+        "description": "Enjoy the winter season with a stylish cup of tea. Perfect for cozy mornings and relaxing evenings. Like and follow us for more!",
     },
     {
         "id": 8,
@@ -166,6 +168,7 @@ PRODUCTS = [
         "price": 24.99,
         "sale": 0.00,
         "in_stock": False,
+        "description": "Enjoy the winter season with a stylish cup of tea. Perfect for cozy mornings and relaxing evenings. Like and follow us for more!",
     },
     {
         "id": 11,

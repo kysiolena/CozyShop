@@ -1,0 +1,17 @@
+{% extends "shop/layout/base.html" %}
+
+{% block main %}
+    <div class="row pt-4">
+        {% include 'shop/blocks/breadcrumbs.html' %}
+
+        <h1 class="mb-4">{{ page_name }}</h1>
+
+        <div class="col-12 pb-4">
+            {% include 'catalog/blocks/search.html' %}
+        </div>
+
+        <div class="col-12">
+            {% include "catalog/blocks/products.html" with col=3 %}
+        </div>
+    </div>
+{% endblock %}

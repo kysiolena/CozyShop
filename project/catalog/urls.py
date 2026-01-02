@@ -1,18 +1,15 @@
+from django.urls import path
+
 from catalog.views import (
     CatalogView,
     CategoryView,
     ProductView,
-    ProductReviewView,
+    SearchView,
 )
-from django.urls import path
 
 urlpatterns = [
     path("", CatalogView.as_view(), name="catalog_page"),
-    path("category/<str:slug>", CategoryView.as_view(), name="category_page"),
-    path("product/<str:slug>", ProductView.as_view(), name="product_page"),
-    path(
-        "product/<str:slug>/review-create",
-        ProductReviewView.as_view(),
-        name="product_review_create_page",
-    ),
+    path("category/<slug:slug>", CategoryView.as_view(), name="category_page"),
+    path("product/<slug:slug>", ProductView.as_view(), name="product_page"),
+    path("search/", SearchView.as_view(), name="search_page"),
 ]
