@@ -1,13 +1,29 @@
 {% extends "./layout/base.html" %}
 
+{% load static %}
+
 {% block main %}
-    <div class="row pt-4">
-        <h1 class="mb-4">Shop {{ page_name }} Page! 🤩</h1>
-        
-        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-            <a href="{% url 'catalog_page' %}" class="btn btn-danger">Catalog</a>
-            <a href="{% url 'category_page' slug='warm-lighting' %}" class="btn btn-warning">Category</a>
-            <a href="{% url 'product_page' slug='touch-night-light' %}" class="btn btn-success">Product</a>
+    <div class="row py-4">
+        <div class="col-12">
+            <div class="card text-bg-dark text-center">
+                <div class="w-100" style="height: 70dvh">
+                    <img
+                            src="{% static 'shop/images/cozy-home.webp' %}"
+                            class="card-img w-100"
+                            alt="Cozy Home"
+                            style="height: 100%; object-fit: cover; object-position: top;">
+                </div>
+                <div class="card-img-overlay">
+                    <h1 class="card-title mt-4">✨ Wellcome to The Cozy Shop ✨</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row py-4">
+        <div class="col-12">
+            <h2 class="mb-4">Here you will find everything <br>you ever wanted! ☺️</h2>
+
+            {% include 'catalog/blocks/search.html' %}
         </div>
     </div>
 

@@ -1,0 +1,10 @@
+<form class="d-flex" role="search" action="{% url 'search_page' %}">
+    <input class="form-control me-2"
+           type="search"
+           placeholder="Search the Product by name or description..."
+           aria-label="Search"
+           name="search"
+           value="{{ request.GET.search|default:'' }}"
+    />
+    <button class="btn btn-dark" type="submit">Search</button>
+</form>

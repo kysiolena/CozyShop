@@ -3,7 +3,7 @@
 <div class="row mb-4">
     {% if page_obj|length %}
         {% for product in page_obj %}
-            <div class="col-4 mb-4">
+            <div class="col-{{ col|default:4 }} mb-4">
                 {% include 'catalog/blocks/product-card.html' %}
             </div>
         {% endfor %}

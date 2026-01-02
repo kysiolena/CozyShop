@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView
 
@@ -87,3 +88,32 @@ class ProductView(BaseContextMixin, DetailView):
 
     def get_queryset(self):
         return super().get_queryset().prefetch_related("categories")
+
+
+class SearchView(BaseContextMixin, ListView):
+    template_name = "catalog/search.html"
+    model = Product
+    paginate_by = 12
+    ordering = "-created_at"
+
+    def get_breadcrumbs(self):
+        # Define breadcrumbs as a list of (name, url) tuples
+        return [
+            ("Home", reverse_lazy("shop_page")),
+            ("Catalog", reverse_lazy("catalog_page")),
+            (self.page_name, None),
+        ]
+
+    def get_queryset(self):
+        # Get search parameter
+        search = self.request.GET.get("search") or ""
+
+        # Set Page Name
+        self.page_name = f"Search results for «{search}»"
+
+        return (
+            super()
+            .get_queryset()
+            .filter(Q(name__icontains=search) | Q(description__icontains=search))
+            .order_by("-created_at")
+        )
