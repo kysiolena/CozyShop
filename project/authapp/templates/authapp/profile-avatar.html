@@ -4,7 +4,7 @@
 
 {% block form %}
     <div class="mb-4">
-        <img src="{{ object.img }}" class="profile-img img-thumbnail"
+        <img src="{{ object.img }}" class="preview-img img-thumbnail"
              alt="{{ user.username|default_if_none:'img' }}">
     </div>
 
@@ -13,26 +13,11 @@
 {% endblock %}
 
 {% block scripts %}
+    <script src="{% static 'shop/js/image_preview.js' %}"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const img = document.querySelector(".profile-img")
-            const inputField = document.querySelector("input[name='image']")
-
-            if (inputField && img) {
-                inputField.addEventListener("change", (evt) => {
-                    const file = evt.target.files[0];
-                    const reader = new FileReader();
-
-                    reader.addEventListener("load", (evt) => {
-                        img.src = evt.target.result;
-                    });
-
-                    if (file) {
-                        reader.readAsDataURL(file);
-                    } else {
-                        img.src = "{% static 'shop/images/image-not-found.png' %}";
-                    }
-                })
+            if (typeof imagePreview === 'function') {
+                imagePreview({% static '' %});
             }
         })
     </script>
