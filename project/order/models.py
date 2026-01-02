@@ -59,7 +59,13 @@ class PaymentMethod(models.TextChoices):
 
 
 class Order(TimeStampedModel):
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(
+        UserModel,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="orders",
+    )
     full_name = models.CharField(max_length=200)
     phone = models.CharField(max_length=20)
     email = models.EmailField(max_length=100)

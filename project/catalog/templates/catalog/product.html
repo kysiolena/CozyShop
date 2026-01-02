@@ -7,49 +7,13 @@
         {% include 'shop/blocks/breadcrumbs.html' %}
 
         <div class="col-12">
-            <div class="card text-center text-bg-dark">
-                <div class="w-100" style="height: 70dvh">
-                    {% include 'catalog/blocks/product-image.html' with class='card-img' %}
-                </div>
-                <div class="card-img-overlay">
-                    <h1 class="card-title">{{ product.name }}</h1>
+            {% include 'catalog/blocks/product-card-detail.html' %}
+        </div>
+    </div>
 
-                    <ul class="list-group w-50 m-auto">
-                        <li class="list-group-item">
-                            {% include 'catalog/blocks/stock.html' %}
-                        </li>
-                        <li class="list-group-item">
-                            {% include 'catalog/blocks/product-price.html' with price=product.price sale_price=product.sale_price %}
-                        </li>
-                        <li class="list-group-item">
-                            {% include 'catalog/blocks/cart.html' %}
-                        </li>
-                        <li class="list-group-item">
-                            {% for category in product.categories.all %}
-                                <a class="badge text-bg-primary text-decoration-none"
-                                   href="{% url 'category_page' slug=category.slug %}"
-                                >
-                                    {{ category.name }}
-                                </a>
-                            {% endfor %}
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row mt-4">
-        <div class="col-2"></div>
-        <div class="col-8">
-            {% if product.description %}
-                <h3>
-                    Description
-                </h3>
-                <p>
-                    {{ product.description }}
-                </p>
-            {% endif %}
-        </div>
-        <div class="col-2"></div>
-    </div>
+    {% if product.description %}
+        {% include 'catalog/blocks/product-description.html' %}
+    {% endif %}
+
+    {% include 'catalog/blocks/product-comments.html' %}
 {% endblock %}

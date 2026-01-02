@@ -1,0 +1,32 @@
+{% extends "shop/layout/base.html" %}
+
+{% load static %}
+
+{% block main %}
+    <div class="row py-4">
+        <div class="col-12">
+            <h1 class="pb-4">{{ page_name }}</h1>
+        </div>
+        <div class="col-6">
+            <div class="mb-4">
+                <img src="{% static 'shop/images/image-not-found.png' %}"
+                     class="preview-img img-thumbnail"
+                     alt="img">
+            </div>
+
+            {% include 'shop/blocks/form.html' with enctype='multipart/form-data' button='Create' %}
+        </div>
+        <div class="col-6"></div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'shop/js/image_preview.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            if (typeof imagePreview === 'function') {
+                imagePreview({% static '' %});
+            }
+        })
+    </script>
+{% endblock %}

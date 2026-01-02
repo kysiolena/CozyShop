@@ -1,0 +1,16 @@
+{% extends 'catalog/blocks/section.html' %}
+
+
+{% block ps_title %}
+    Comments
+{% endblock %}
+
+{% block ps_content %}
+    {% if user.is_authenticated %}
+        <div class="d-flex justify-content-end w-100 mb-4">
+            {% include 'comment/blocks/create.html' %}
+        </div>
+    {% endif %}
+
+    {% include 'comment/blocks/list.html' with comments=product.approved_comments product_name=product.name %}
+{% endblock %}

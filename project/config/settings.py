@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "shop",
     "authapp",
     "catalog",
+    "comment",
     "cart",
     "order",
 ]
