@@ -1,8 +1,9 @@
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView
 
 from catalog.models import Product, Category
+from comment.models import Comment
 from shop.views import BaseContextMixin
 
 
@@ -87,7 +88,29 @@ class ProductView(BaseContextMixin, DetailView):
         ]
 
     def get_queryset(self):
-        return super().get_queryset().prefetch_related("categories")
+        # Define a custom, filtered queryset for the related objects
+        approved_comments = Comment.objects.filter(is_approved=True).prefetch_related(
+            "user"
+        )
+
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related("categories")
+            .prefetch_related(
+                Prefetch(
+                    "comment_set",
+                    queryset=approved_comments,
+                    to_attr="approved_comments",
+                )
+            )
+        )
+
+    def get_context_data(self, **kwargs):
+        # Set Page Name
+        self.page_name = self.object.name
+
+        return super().get_context_data(**kwargs)
 
 
 class SearchView(BaseContextMixin, ListView):
