@@ -1,14 +1,14 @@
-<ul class="nav nav-pills flex-column" style="top: 56px">
+<div class="btn-group-vertical w-100" role="group" aria-label="Categories">
     {% for cat in categories %}
-        <li class="nav-item">
-            <a class="nav-link {% if cat.slug == category.slug %} active {% endif %}"
-                    {% if cat.slug == category.slug %} aria-current="page" {% endif %}
-               href="{% url 'category_page' slug=cat.slug %}"
-            >
+        {% url 'category_page' slug=cat.slug as cat_url %}
+        {% if cat.slug == category.slug %}
+            <a href="{{ cat_url }}" class="btn btn-dark" aria-current="page">
                 {{ cat.name }}
             </a>
-        </li>
+        {% else %}
+            <a href="{{ cat_url }}" class="btn btn-secondary">
+                {{ cat.name }}
+            </a>
+        {% endif %}
     {% endfor %}
-
-
-</ul>
+</div>
