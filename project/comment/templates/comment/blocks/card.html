@@ -1,0 +1,35 @@
+<li class="card">
+    <div class="row g-0">
+        <div class="col-md-4 d-flex align-items-stretch">
+            {% if comment.img %}
+                <img
+                        src="{{ comment.img }}"
+                        class="img-fluid rounded-start"
+                        alt="{{ product_name }}"
+                        style="object-fit: cover;object-position: center"
+                >
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title d-flex align-items-center gap-2">
+                    <div class="avatar">
+                        {% if comment.user.profile.img %}
+                            <img src="{{ comment.user.profile.img }}" alt="{{ comment.user.name }}">
+                        {% endif %}
+                    </div>
+
+                    <span>{{ comment.user.username }}</span>
+                </h5>
+                <p class="card-text">
+                    {{ comment.body }}
+                </p>
+                <p class="card-text">
+                    <small class="text-body-secondary">
+                        {{ comment.created_at }}
+                    </small>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>

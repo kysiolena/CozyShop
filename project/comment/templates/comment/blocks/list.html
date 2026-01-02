@@ -1,0 +1,9 @@
+{% if comments|length %}
+    <ul class="list-unstyled d-flex flex-column gap-4">
+        {% for comment in comments %}
+            {% include 'comment/blocks/card.html' %}
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No comments yet.</p>
+{% endif %}

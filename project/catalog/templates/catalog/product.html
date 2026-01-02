@@ -7,94 +7,13 @@
         {% include 'shop/blocks/breadcrumbs.html' %}
 
         <div class="col-12">
-            <div class="card text-center text-bg-dark">
-                <div class="w-100" style="height: 70dvh">
-                    {% include 'catalog/blocks/product-image.html' with class='card-img' %}
-                </div>
-                <div class="card-img-overlay">
-                    <h1 class="card-title">{{ product.name }}</h1>
-
-                    <ul class="list-group w-50 m-auto">
-                        <li class="list-group-item">
-                            {% include 'catalog/blocks/stock.html' %}
-                        </li>
-                        <li class="list-group-item">
-                            {% include 'catalog/blocks/product-price.html' with price=product.price sale_price=product.sale_price %}
-                        </li>
-                        <li class="list-group-item">
-                            {% include 'catalog/blocks/cart.html' %}
-                        </li>
-                        <li class="list-group-item">
-                            {% for category in product.categories.all %}
-                                <a class="badge text-bg-primary text-decoration-none"
-                                   href="{% url 'category_page' slug=category.slug %}"
-                                >
-                                    {{ category.name }}
-                                </a>
-                            {% endfor %}
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            {% include 'catalog/blocks/product-card-detail.html' %}
         </div>
     </div>
+
     {% if product.description %}
-        <div class="row mt-4">
-            <div class="col-2"></div>
-            <div class="col-8">
-                <h3>
-                    Description
-                </h3>
-                <p>
-                    {{ product.description }}
-                </p>
-            </div>
-            <div class="col-2"></div>
-        </div>
+        {% include 'catalog/blocks/product-description.html' %}
     {% endif %}
-    <div class="row mt-4">
-        <div class="col-2"></div>
-        <div class="col-8">
-            <h3>
-                Comments
-            </h3>
 
-            {% if user.is_authenticated %}
-
-            {% endif %}
-            <p>
-                {% include 'comment/blocks/create.html' %}
-            </p>
-
-            {% if product.approved_comments|length %}
-                {% for comment in product.approved_comments %}
-                    <div class="card mb-3">
-                        {% if comment.img %}
-                            <img src="{{ comment.img }}" class="card-img-top" alt="{{ product.name }}">
-                        {% endif %}
-
-                        <div class="card-body">
-                            <h5 class="card-title d-flex align-items-center gap-2">
-                                <div class="avatar">
-                                    {% if comment.user.profile.img %}
-                                        <img src="{{ comment.user.profile.img }}" alt="{{ comment.user.name }}">
-                                    {% endif %}
-                                </div>
-
-                                <span>{{ comment.user.username }}</span>
-                            </h5>
-                            <p class="card-text">
-                                {{ comment.body }}
-                            </p>
-                            <p class="card-text"><small class="text-body-secondary">{{ comment.created_at }}</small></p>
-                        </div>
-                    </div>
-                {% endfor %}
-
-            {% else %}
-                No comments yet.
-            {% endif %}
-        </div>
-        <div class="col-2"></div>
-    </div>
+    {% include 'catalog/blocks/product-comments.html' %}
 {% endblock %}

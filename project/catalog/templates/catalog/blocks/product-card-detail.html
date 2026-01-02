@@ -1,0 +1,29 @@
+<div class="card text-center text-bg-dark">
+    <div class="w-100" style="height: 80dvh">
+        {% include 'catalog/blocks/product-image.html' with class='card-img' %}
+    </div>
+    <div class="card-img-overlay d-flex flex-column align-items-center justify-content-center">
+        <h1 class="card-title mb-4">{{ product.name }}</h1>
+
+        <ul class="list-group w-50">
+            <li class="list-group-item">
+                {% include 'catalog/blocks/stock.html' %}
+            </li>
+            <li class="list-group-item">
+                {% include 'catalog/blocks/product-price.html' with price=product.price sale_price=product.sale_price %}
+            </li>
+            <li class="list-group-item">
+                {% include 'catalog/blocks/cart.html' %}
+            </li>
+            <li class="list-group-item">
+                {% for category in product.categories.all %}
+                    <a class="badge text-bg-primary text-decoration-none"
+                       href="{% url 'category_page' slug=category.slug %}"
+                    >
+                        {{ category.name }}
+                    </a>
+                {% endfor %}
+            </li>
+        </ul>
+    </div>
+</div>
