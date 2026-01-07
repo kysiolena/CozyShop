@@ -2,30 +2,12 @@
 
 ## Start project
 
-1. Create `env.sh` file from `env.example.sh` file
-2. Set environment variables by command `source env.sh`
-3. Migrations
-
-    ```terminaloutput
-        py manage.py makemigrations
-    ```
-4. Migrate
-
-    ```terminaloutput
-        py manage.py migrate
-    ```
-
-5. When you first run a project, you need to populate the database with mock data after migration:
-
-    ```terminaloutput
-        py manage.py seeds
-    ```
-
-6. Create Super User
-
-    ```terminaloutput
-        py manage.py createsuperuser
-    ```
+1. Move to _project_ folder `cd project/`
+2. Create `.env` file from `.env.example` file in _project_ folder
+3. Build `docker compose up -d --build` or start existing `docker compose up -d` containers
+4. Create Super User `docker compose exec django python manage.py createsuperuser`
+5. Stop containers `docker compose stop`
+6. Stop and remove containers `docker compose down`
 
 ## Checklist
 
