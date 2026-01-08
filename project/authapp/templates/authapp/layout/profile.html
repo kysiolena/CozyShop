@@ -2,10 +2,11 @@
 
 {% block main %}
     <div class="row py-4">
+        <div class="col-12">
+            {% include 'authapp/blocks/tabs.html' %}
+        </div>
         <div class="col-3"></div>
         <div class="col-6">
-            {% include 'authapp/blocks/tabs.html' %}
-           
             <h1 class="pb-4">{{ page_name }}</h1>
 
             {% block form %}{% endblock %}

@@ -1,6 +1,6 @@
 {% load catalog.filters %}
 
-<div class="row mb-4">
+<div class="row {% if class %}{{ class }}{% else %}mb-4{% endif %}">
     {% if page_obj|length %}
         {% for product in page_obj %}
             <div class="col-{{ col|default:4 }} mb-4">

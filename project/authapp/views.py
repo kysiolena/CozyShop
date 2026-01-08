@@ -262,6 +262,7 @@ class ProfileTabsMixin(BaseContextMixin):
             {"name": "Billing Info", "url": "profile_billing_info_page"},
             {"name": "Shipping Info", "url": "profile_shipping_info_page"},
             {"name": "Orders", "url": "profile_orders_page"},
+            {"name": "Subscribe Products", "url": "profile_subscribe_product_page"},
             {"name": "Delete", "url": "profile_delete_page"},
         ]
 
