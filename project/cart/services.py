@@ -281,28 +281,32 @@ class Cart:
             item = self.get_item(product.id)
 
             if item:
-                # Calculate total item price
-                total_item_price = product.price * item["quantity"]
-                # Without sale total item price and total item sale price are equal
-                total_item_sale_price = total_item_price
+                if product.in_stock:
+                    # Calculate total item price
+                    total_item_price = product.price * item["quantity"]
+                    # Without sale total item price and total item sale price are equal
+                    total_item_sale_price = total_item_price
 
-                if product.sale_price:
-                    total_item_sale_price = product.sale_price * item["quantity"]
+                    if product.sale_price:
+                        total_item_sale_price = product.sale_price * item["quantity"]
 
-                # Add total item price to total cart price
-                total_price += total_item_price
-                # Add total item sale price to total cart sale price
-                total_sale_price += total_item_sale_price
+                    # Add total item price to total cart price
+                    total_price += total_item_price
+                    # Add total item sale price to total cart sale price
+                    total_sale_price += total_item_sale_price
 
-                # Combine full cart item dict
-                cart_item_full.append(
-                    {
-                        "product": product,
-                        "quantity": item["quantity"],
-                        "total_price": round(total_item_price, 2),
-                        "total_sale_price": round(total_item_sale_price, 2),
-                    }
-                )
+                    # Combine full cart item dict
+                    cart_item_full.append(
+                        {
+                            "product": product,
+                            "quantity": item["quantity"],
+                            "total_price": round(total_item_price, 2),
+                            "total_sale_price": round(total_item_sale_price, 2),
+                        }
+                    )
+                else:
+                    # If Product is out of stock - remove it from the Cart
+                    self.delete_item(product.id)
 
         return {
             "cart_items": cart_item_full,
