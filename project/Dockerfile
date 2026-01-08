@@ -20,10 +20,10 @@ RUN pip install --upgrade pip
 # Copy the Django project  and install dependencies
 COPY requirements.txt  /app/
 
-# Copy entypoint.sh
-COPY entypoint.sh /app/
+# Copy entrypoint.sh
+COPY entrypoint.sh /app/
 
-RUN chmod +x /app/entypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 # run this command to install all dependencies
 RUN pip install --no-cache-dir -r requirements.txt
@@ -31,13 +31,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the Django project to the container
 COPY . /app/
 
-ENTRYPOINT ["/app/entypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Expose the Django port
 EXPOSE 8000
 
-# Run Django’s development server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Start the application using Uvicorn
+CMD ["uvicorn", "config.asgi:application", "--host", "0.0.0.0", "--port", "8000", "--workers", "4", "--log-level", "debug"]
 
 # v. 2
 ## Stage 1: Base build stage
@@ -90,4 +90,4 @@ CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 #EXPOSE 8000
 #
 ## Start the application using Gunicorn
-#CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "project.wsgi:application"]
+#CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "config.wsgi:application"]

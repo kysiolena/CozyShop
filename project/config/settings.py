@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "comment",
     "cart",
     "order",
+    "channels",
     "subscribe",
 ]
 
@@ -166,3 +167,10 @@ EMAIL_PORT = str_to_int(os.getenv("EMAIL_PORT"))
 # PayPal
 PAYPAL_TEST = str_to_bool(os.getenv("PAYPAL_TEST"))
 PAYPAL_RECEIVER_EMAIL = os.getenv("PAYPAL_RECEIVER_EMAIL")
+
+# Channels
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    }
+}
