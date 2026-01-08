@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "comment",
     "cart",
     "order",
+    "subscribe",
 ]
 
 MIDDLEWARE = [
