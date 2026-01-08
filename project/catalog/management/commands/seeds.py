@@ -1,5 +1,6 @@
 import random
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from catalog.management.commands._seeds_data import CATEGORIES, PRODUCTS
@@ -11,11 +12,14 @@ class Command(BaseCommand):
     help = "This command seeds DB with mock data."
 
     def handle(self, *args, **options):
-        self.stdout.write("Seeding DB with mock data...")
+        if not settings.IS_PRODUCTION:
+            self.stdout.write("Seeding DB with mock data...")
 
-        self.seed_db()
+            self.seed_db()
 
-        self.stdout.write("DB was successfully seeded!")
+            self.stdout.write("DB was successfully seeded!")
+        else:
+            self.stdout.write("DB was not seeded in production mode.")
 
     # Helper functions
     @staticmethod
