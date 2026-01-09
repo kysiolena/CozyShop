@@ -2,6 +2,7 @@ import json
 import logging
 from typing import TypedDict
 
+from cart.tasks import send_notification_task
 from catalog.models import Product
 
 # Logger
@@ -102,6 +103,9 @@ class Cart:
             success = self.sync()
 
             if success:
+                # Send a notification to all users who are currently browsing the site
+                send_notification_task.delay(product_id=product_id)
+
                 return True
             else:
                 raise Exception("Failed update Profile cart")
