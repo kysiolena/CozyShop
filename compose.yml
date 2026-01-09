@@ -40,7 +40,13 @@ services:
     ports:
       - "8000:8000"
     restart: always
-    command: [ "uvicorn", "config.asgi:application", "--host", "0.0.0.0", "--port", "8000", "--log-level", "debug", "--reload" ] # "--workers", "4",
+    command: [
+      "uvicorn", "config.asgi:application",
+      "--host", "0.0.0.0",
+      "--port", "8000",
+      "--log-level", "debug",
+      "--reload-include", "*.html",
+      "--reload" ] # "--workers", "4",
     volumes:
       - ./project:/app/www/cozyshop
     environment:
