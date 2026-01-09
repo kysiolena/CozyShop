@@ -17,48 +17,13 @@
 </head>
 <body>
 
-<header class="sticky-top">
-    <nav class="navbar bg-light">
-        <div class="container justify-content-space-between">
-            <div class="d-flex gap-2">
-                {% include 'catalog/blocks/button-catalog.html' %}
-                {% include 'cart/blocks/button-cart.html' with class='ms-2' %}
-            </div>
-
-            {% include 'shop/blocks/logo.html' %}
-
-            <div class="d-flex gap-2">
-                {% if user.is_authenticated %}
-                    {% include 'authapp/blocks/button-profile.html' %}
-                    {% include 'authapp/blocks/button-sign-out.html' %}
-                {% else %}
-                    {% include 'authapp/blocks/button-sign-in.html' %}
-                    {% include 'authapp/blocks/button-sign-up.html' %}
-                {% endif %}
-            </div>
-        </div>
-    </nav>
-
-    <div class="container">
-        {% include 'shop/blocks/messages.html' %}
-    </div>
-</header>
+{% include 'shop/layout/header.html' %}
 
 <main class="container">
     {% block main %}{% endblock %}
 </main>
 
-<footer class="">
-    <nav class="navbar bg-light">
-        <div class="container justify-content-space-between">
-            {% include 'shop/blocks/contacts.html' %}
-
-            {% include 'shop/blocks/logo.html' %}
-
-            {% include 'catalog/blocks/search.html' %}
-        </div>
-    </nav>
-</footer>
+{% include 'shop/layout/footer.html' %}
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
@@ -75,6 +40,7 @@ __START__ Requests Scripts
 
 <script src="{% static 'cart/js/add_cart_item.js' %}"></script>
 <script src="{% static 'subscribe/js/item.js' %}"></script>
+<script src="{% static 'subscribe/js/info_panel.js' %}"></script>
 {% comment %}
 __END__ Requests Scripts
 {% endcomment %}

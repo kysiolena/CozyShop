@@ -1,0 +1,26 @@
+<header class="sticky-top">
+    <nav class="navbar bg-light">
+        <div class="container justify-content-space-between">
+            <div class="d-flex gap-2">
+                {% include 'catalog/blocks/button-catalog.html' %}
+                {% include 'cart/blocks/button-cart.html' with class='ms-2' %}
+            </div>
+
+            {% include 'shop/blocks/logo.html' %}
+
+            <div class="d-flex gap-2">
+                {% if user.is_authenticated %}
+                    {% include 'authapp/blocks/button-profile.html' %}
+                    {% include 'authapp/blocks/button-sign-out.html' %}
+                {% else %}
+                    {% include 'authapp/blocks/button-sign-in.html' %}
+                    {% include 'authapp/blocks/button-sign-up.html' %}
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container position-relative">
+        {% include 'shop/blocks/messages.html' %}
+    </div>
+</header>
