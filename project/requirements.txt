@@ -1,6 +1,6 @@
 black==25.12.0
 pillow==12.1.0
-psycopg==3.3.2
+psycopg2-binary==2.9.11
 Django==6.0.1
 django-css-inline==0.0.6
 django-paypal==2.1

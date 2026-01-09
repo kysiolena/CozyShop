@@ -2,12 +2,17 @@
 
 ## Start project
 
-1. Move to _project_ folder `cd project/`
-2. Create `.env` file from `.env.example` file in _project_ folder
-3. Build `docker compose up -d --build` or start existing `docker compose up -d` containers
-4. Create Super User `docker compose exec django python manage.py createsuperuser`
-5. Stop containers `docker compose stop`
-6. Stop and remove containers `docker compose down`
+1. Create `.env` file from `.env.example` file
+2. Build `docker compose up --build` containers
+3. (Optional) Migrate `docker compose exec cozyshop python manage.py migrate`
+4. (Optional) Make migrations `docker compose exec cozyshop python manage.py makemigrations`
+5. (Optional) Load DB data `docker compose exec cozyshop python manage.py loaddata db.json`
+6. (Optional) Dump DB data `docker compose exec cozyshop python manage.py dumpdata > project/db.json`
+7. (Optional) Seed DB `docker compose exec cozyshop python manage.py seeds`
+8. (Optional) Create Super User `docker compose exec cozyshop python manage.py createsuperuser`
+9. (Optional) Stop containers `docker compose stop`
+10. (Optional) Stop and remove containers `docker compose down`
+11. (Optional) Start existing containers `docker compose up`
 
 ## Checklist
 
