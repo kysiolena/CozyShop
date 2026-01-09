@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     "use strict";
 
+    const infoPanel = document.querySelector("#info-panel");
 
     const websocketProtocol = location.protocol === "https:" ? "wss" : "ws";
     const wsEndpoint = `${websocketProtocol}://${location.host}/ws/info-panel/`;
@@ -8,10 +9,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Event listener to capture incoming message
     socket.addEventListener("message", (e) => {
-        const messageData = JSON.parse(e.data);
+        // Get HTML alert
+        const data = JSON.parse(e.data);
 
-        const infoPanel = document.querySelector("#info-panel");
+        // Create container for HTML alert
+        const divEl = document.createElement("div");
 
-        infoPanel.innerHTML += messageData.message;
+        // Place HTML to container
+        divEl.innerHTML = data.message;
+
+        if (infoPanel) {
+            // Add container with alert to Info Panel
+            infoPanel.appendChild(divEl);
+
+            // Hide container
+            setTimeout(() => {
+                divEl.classList.add("fade");
+            }, 5000);
+
+            // Delete container
+            setTimeout(() => {
+                infoPanel.removeChild(divEl);
+            }, 5200);
+        }
     });
 });
