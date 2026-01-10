@@ -15,15 +15,3 @@ class SubscribeProduct(TimeStampedModel):
 
     class Meta:
         unique_together = ("user", "product")
-
-
-# # Send email when in_stock flag of Product change (only Subscribed users)
-# def send_email_when_update_product_in_stock(
-#     sender, instance, created, update_fields, **kwargs
-# ):
-#     if not created and update_fields:
-#         # Send email logic (TO DO: celery)
-#         print("Send email logic (TO DO: celery)", update_fields)
-#
-#
-# post_save.connect(send_email_when_update_product_in_stock, sender=Product)

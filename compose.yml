@@ -122,29 +122,29 @@ services:
       redis:
         condition: service_started
 
-  #  celery_beat:
-  #    build: ./project
-  #    image: celery_beat_cozyshop
-  #    container_name: celery_beat
-  #    restart: always
-  #    command: [
-  #      "celery",
-  #      "--app", "config",
-  #      "beat",
-  #      "--loglevel", "info"
-  #    ]
-  #    volumes:
-  #      - ./project:/app/www/cozyshop
-  #    env_file:
-  #      - .env
-  #    networks:
-  #      - dbnet
-  #    depends_on:
-  #      rabbitmq:
-  #        condition: service_healthy
-  #      redis:
-  #        condition: service_started
-  #
+  celery_beat:
+    build: ./project
+    image: celery_beat_cozyshop
+    container_name: celery_beat
+    restart: always
+    command: [
+      "celery",
+      "--app", "config",
+      "beat",
+      "--loglevel", "info"
+    ]
+    volumes:
+      - ./project:/app/www/cozyshop
+    env_file:
+      - .env
+    networks:
+      - dbnet
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
   flower:
     image: mher/flower
     container_name: flower
