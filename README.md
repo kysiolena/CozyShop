@@ -27,7 +27,7 @@
 9. [x] Add Order (model, form, views, templates)
 10. [x] Add Payment logic (PayPal sandbox)
 11. [x] Add Comment (model, form, view, template)
-12. [ ] Add Subscription (Celery)
+12. [x] Add Subscription (Celery Beat)
 13. [x] Add InfoPanel (WebSocket, Celery)
 14. [ ] Deploy
 15. [ ] Tests
