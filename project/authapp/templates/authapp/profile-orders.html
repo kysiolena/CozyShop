@@ -1,35 +1,6 @@
 {% extends "authapp/layout/profile.html" %}
 
 {% block form %}
-    <div class="py-4">
-        {% if page_obj|length %}
-            <div class="accordion" id="accordion-orders">
-                {% for order in page_obj %}
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapse-order-{{ order.id }}" aria-expanded="false"
-                                    aria-controls="collapse-order-{{ order.id }}">
-                                <span class="d-flex gap-2">
-                                    <span>Order #{{ order.id }}</span>
-                                    <span class="text-muted">{{ order.created_at }}</span>
-                                    <span class="badge text-bg-{{ order.status_info.style }}">{{ order.status_info.label }}</span>
-                                </span>
-                            </button>
-                        </h2>
-                        <div id="collapse-order-{{ order.id }}" class="accordion-collapse collapse"
-                             data-bs-parent="#accordion-orders">
-                            <div class="accordion-body">
-                                {% include 'order/blocks/order-item-table.html' %}
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p>No orders yet.</p>
-        {% endif %}
-    </div>
-
-    {% include 'shop/blocks/pagination.html' %}
+    {% include 'order/blocks/list.html' with class="py-4" %}
 {% endblock %}
+

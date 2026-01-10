@@ -1,5 +1,13 @@
-{% if product.id in cart.get_ids %}
-    {% include 'cart/blocks/button-added.html' with class='flex-grow-1' %}
+{% if product.in_stock %}
+    {% if product.id in cart.get_ids %}
+        {% include 'cart/blocks/button-added.html' with class='flex-grow-1' %}
+    {% else %}
+        {% include 'cart/blocks/button-add.html' with class='flex-grow-1' %}
+    {% endif %}
 {% else %}
-    {% include 'cart/blocks/button-add.html' with class='flex-grow-1' %}
+    {% if product.id in subscribe.get_product_ids %}
+        {% include 'subscribe/blocks/product/button-unsubscribe.html' with class='flex-grow-1' %}
+    {% else %}
+        {% include 'subscribe/blocks/product/button-subscribe.html' with class='flex-grow-1' %}
+    {% endif %}
 {% endif %}

@@ -1,5 +1,5 @@
-{% if messages %}
-    <div class="messages-container">
+<div class="messages-container">
+    {% if messages %}
         {% for message in messages %}
             {% if message.tags == 'error' %}
                 <div class="alert alert-danger alert-dismissible fade show my-2" role="alert">
@@ -13,5 +13,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         {% endfor %}
-        </div>
-{% endif %}
+
+        {% include 'subscribe/blocks/product/info-panel.html' %}
+    {% endif %}
+    </div>

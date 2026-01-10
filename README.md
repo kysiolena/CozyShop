@@ -2,30 +2,17 @@
 
 ## Start project
 
-1. Create `env.sh` file from `env.example.sh` file
-2. Set environment variables by command `source env.sh`
-3. Migrations
-
-    ```terminaloutput
-        py manage.py makemigrations
-    ```
-4. Migrate
-
-    ```terminaloutput
-        py manage.py migrate
-    ```
-
-5. When you first run a project, you need to populate the database with mock data after migration:
-
-    ```terminaloutput
-        py manage.py seeds
-    ```
-
-6. Create Super User
-
-    ```terminaloutput
-        py manage.py createsuperuser
-    ```
+1. Create `.env` file from `.env.example` file
+2. Build `docker compose up --build` containers
+3. (Optional) Migrate `docker compose exec cozyshop python manage.py migrate`
+4. (Optional) Make migrations `docker compose exec cozyshop python manage.py makemigrations`
+5. (Optional) Load DB data `docker compose exec cozyshop python manage.py loaddata db.json`
+6. (Optional) Dump DB data `docker compose exec cozyshop python manage.py dumpdata > project/db.json`
+7. (Optional) Seed DB `docker compose exec cozyshop python manage.py seeds`
+8. (Optional) Create Super User `docker compose exec cozyshop python manage.py createsuperuser`
+9. (Optional) Stop containers `docker compose stop`
+10. (Optional) Stop and remove containers `docker compose down`
+11. (Optional) Start existing containers `docker compose up`
 
 ## Checklist
 
@@ -40,7 +27,7 @@
 9. [x] Add Order (model, form, views, templates)
 10. [x] Add Payment logic (PayPal sandbox)
 11. [x] Add Comment (model, form, view, template)
-12. [ ] Add Subscription (Celery)
-13. [ ] Add InfoTable (WebSocket)
-14. [ ] Add Favorite
+12. [x] Add Subscription (Celery Beat)
+13. [x] Add InfoPanel (WebSocket, Celery)
+14. [ ] Deploy
 15. [ ] Tests

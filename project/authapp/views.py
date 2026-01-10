@@ -7,7 +7,6 @@ from django.contrib.auth import views as auth_views, get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import send_mail
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -27,6 +26,7 @@ from authapp.forms import (
     ProfileAvatarUpdateForm,
     ProfileBillingInfoUpdateForm,
 )
+from authapp.tasks import send_email_task
 from order.forms import ShippingAddressForm
 from shop.views import BaseContextMixin
 
@@ -116,21 +116,19 @@ class SignUpView(RedirectAuthenticatedUserMixin, BaseContextMixin, CreateView):
             context={
                 "user": user,
                 "domain": current_site.domain,
+                "protocol": "https" if self.request.is_secure() else "http",
                 "uid": urlsafe_base64_encode(force_bytes(user.pk)),
                 "token": default_token_generator.make_token(user),
             },
         )
 
         try:
-
-            # 3. Send email via Mailtrap
-            send_mail(
-                subject=email_subject,
-                message="",
-                html_message=message,
+            # 3. Send email
+            send_email_task.delay(
+                to_emails=[user.email],
                 from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
-                fail_silently=False,
+                subject=email_subject,
+                html_body=message,
             )
 
             messages.info(
@@ -262,6 +260,7 @@ class ProfileTabsMixin(BaseContextMixin):
             {"name": "Billing Info", "url": "profile_billing_info_page"},
             {"name": "Shipping Info", "url": "profile_shipping_info_page"},
             {"name": "Orders", "url": "profile_orders_page"},
+            {"name": "Subscribe Products", "url": "profile_subscribe_product_page"},
             {"name": "Delete", "url": "profile_delete_page"},
         ]
 
@@ -359,19 +358,18 @@ class ProfileDeleteView(
             context={
                 "user": user,
                 "domain": current_site.domain,
+                "protocol": "https" if request.is_secure() else "http",
                 "uid": urlsafe_base64_encode(force_bytes(user.pk)),
                 "token": default_token_generator.make_token(user),
             },
         )
 
         try:
-            send_mail(
-                subject=email_subject,
-                message="",
-                html_message=message,
+            send_email_task.delay(
+                to_emails=[user.email],
                 from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
-                fail_silently=False,
+                subject=email_subject,
+                html_body=message,
             )
 
             messages.info(

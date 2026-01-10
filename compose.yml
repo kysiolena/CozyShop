@@ -1,0 +1,171 @@
+services:
+  #  nginx:
+  #    image: nginx:latest
+  #    container_name: nginx-server
+  #    expose:
+  #      - 8088
+  #    ports:
+  #      - "80:8088"
+  #    restart: always
+  #    volumes:
+  #      - ./project/static:/app/www/cozyshop/static
+  #      - ./project/media:/app/www/cozyshop/media
+  #      - ./project/logs:/app/www/cozyshop/logs
+  #      - ./nginx:/etc/nginx/conf.d
+  #    networks:
+  #      - dbnet
+  #    depends_on:
+  #      - cozyshop
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: psgr
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    env_file:
+      - .env
+    networks:
+      - dbnet
+
+  cozyshop:
+    build: ./project
+    image: cozyshop
+    container_name: cozyshop
+    ports:
+      - "8000:8000"
+    restart: always
+    command: [
+      "uvicorn", "config.asgi:application",
+      "--host", "0.0.0.0",
+      "--port", "8000",
+      "--log-level", "debug",
+      # "--workers", "4",
+      "--reload-include", "*.html",
+      "--reload-include", "*.js",
+      "--reload-include", "*.css",
+      "--reload-include", "*.py",
+      "--reload",
+    ]
+    volumes:
+      - ./project:/app/www/cozyshop
+    env_file:
+      - .env
+    links:
+      - "postgres:dbps"
+    networks:
+      - dbnet
+    depends_on:
+      - postgres
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - "8080:8080"
+    links:
+      - "postgres:db"
+    networks:
+      - dbnet
+    depends_on:
+      - postgres
+
+  rabbitmq:
+    image: rabbitmq:3-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: always
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dbnet
+
+  redis:
+    image: redis:8.0-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: always
+    networks:
+      - dbnet
+
+  celery:
+    build: ./project
+    image: celery_cozyshop
+    container_name: celery
+    restart: always
+    command: [
+      "celery",
+      "--app", "config",
+      "worker",
+      "--loglevel", "info"
+    ]
+    volumes:
+      - ./project:/app/www/cozyshop
+    env_file:
+      - .env
+    networks:
+      - dbnet
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  celery_beat:
+    build: ./project
+    image: celery_beat_cozyshop
+    container_name: celery_beat
+    restart: always
+    command: [
+      "celery",
+      "--app", "config",
+      "beat",
+      "--loglevel", "info"
+    ]
+    volumes:
+      - ./project:/app/www/cozyshop
+    env_file:
+      - .env
+    networks:
+      - dbnet
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  flower:
+    image: mher/flower
+    container_name: flower
+    ports:
+      - "5555:5555"
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - dbnet
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      celery:
+        condition: service_started
+
+networks:
+  dbnet:
+    driver: bridge
+
+volumes:
+  postgres_data:

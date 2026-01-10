@@ -1,5 +1,6 @@
 import random
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from catalog.management.commands._seeds_data import CATEGORIES, PRODUCTS
@@ -11,61 +12,69 @@ class Command(BaseCommand):
     help = "This command seeds DB with mock data."
 
     def handle(self, *args, **options):
-        self.stdout.write("Seeding DB with mock data...")
+        if not settings.IS_PRODUCTION:
+            self.stdout.write("Seeding DB with mock data...")
 
-        self.seed_db()
+            self.seed_db()
 
-        self.stdout.write("DB was successfully seeded!")
+            self.stdout.write("DB was successfully seeded!")
+        else:
+            self.stdout.write("DB was not seeded in production mode.")
 
     # Helper functions
     @staticmethod
     def bulk_insert_categories() -> None:
-        categories = [
-            Category(
-                **{
-                    "name": c["name"],
-                    "slug": c["slug"],
-                    "image": c["image"] if random.randint(0, 1) else None,
-                    "description": c["description"] if random.randint(0, 1) else None,
-                }
-            )
-            for index, c in enumerate(CATEGORIES)
-        ]
+        if Category.objects.count() == 0:
+            categories = [
+                Category(
+                    **{
+                        "name": c["name"],
+                        "slug": c["slug"],
+                        "image": c["image"] if random.randint(0, 1) else None,
+                        "description": (
+                            c["description"] if random.randint(0, 1) else None
+                        ),
+                    }
+                )
+                for index, c in enumerate(CATEGORIES)
+            ]
 
-        Category.objects.bulk_create(categories)
+            Category.objects.bulk_create(categories)
 
     @staticmethod
     def bulk_insert_products() -> None:
-        products = [
-            Product(
-                **{
-                    "name": p["name"],
-                    "slug": p["slug"],
-                    "price": p["price"],
-                    "sale": p["sale"],
-                    "in_stock": p["in_stock"],
-                    "image": p["image"],
-                    "description": p.get("description", None),
-                }
-            )
-            for p in PRODUCTS
-        ]
-        Product.objects.bulk_create(products)
+        if Product.objects.count() == 0:
+            products = [
+                Product(
+                    **{
+                        "name": p["name"],
+                        "slug": p["slug"],
+                        "price": p["price"],
+                        "sale": p["sale"],
+                        "in_stock": p["in_stock"],
+                        "image": p["image"],
+                        "description": p.get("description", None),
+                    }
+                )
+                for p in PRODUCTS
+            ]
+            Product.objects.bulk_create(products)
 
     @staticmethod
     def bulk_insert_category_product() -> None:
-        products_ids = [p["id"] for p in Product.objects.all().values("id")]
-        categories_ids = [c["id"] for c in Category.objects.all().values("id")]
+        if Product.categories.through.objects.count() == 0:
+            products_ids = [p["id"] for p in Product.objects.all().values("id")]
+            categories_ids = [c["id"] for c in Category.objects.all().values("id")]
 
-        categories_products = [
-            Product.categories.through(
-                product_id=p,
-                category_id=random.choice(categories_ids),
-            )
-            for p in products_ids
-        ]
+            categories_products = [
+                Product.categories.through(
+                    product_id=p,
+                    category_id=random.choice(categories_ids),
+                )
+                for p in products_ids
+            ]
 
-        Product.categories.through.objects.bulk_create(categories_products)
+            Product.categories.through.objects.bulk_create(categories_products)
 
     def seed_db(self):
         try:

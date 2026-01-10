@@ -1,0 +1,7 @@
+<button
+        class="subscribe-product btn btn-warning {% if class %} {{ class }} {% endif %}"
+        data-url="{% url 'subscribe_product_add_page' product_id=product.id %}"
+>
+    Subscribe
+</button>
+

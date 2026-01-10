@@ -1,0 +1,29 @@
+{% extends 'shop/layout/emails/base.html' %}
+
+{% block title %}Product In Stock{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">
+        Hi{% if user.username %}, {{ user.username }}{% endif %}! 👋
+    </h1>
+
+    <p class="mb-2">
+        You were previously subscribed to the product:
+        «<a href="{{ protocol }}://{{ domain }}{% url 'product_page' slug=product.slug %}">{{ product.name }}</a>».
+    </p>
+    <p class="mb-2">
+        We are pleased to inform you that it is back in stock!
+    </p>
+    <div class="mb-2">
+        {% include 'catalog/blocks/product-card.html' %}
+    </div>
+    <a class="btn btn-info"
+       href="{{ protocol }}://{{ domain }}{% url 'product_page' slug=product.slug %}"
+    >
+        Go To Product Page
+    </a>
+    <p class="mt-2">
+        You can unsubscribe from this subscription in your account on
+        <a href="{{ protocol }}://{{ domain }}{% url 'shop_page' %}">Cozy Shop</a> website.
+    </p>
+{% endblock %}

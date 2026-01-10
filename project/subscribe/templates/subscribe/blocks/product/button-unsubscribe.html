@@ -1,0 +1,7 @@
+<button
+        class="unsubscribe-product btn btn-outline-warning {% if class %} {{ class }} {% endif %}"
+        data-url="{% url 'subscribe_product_delete_page' product_id=product.id %}"
+>
+    Unsubscribe
+</button>
+

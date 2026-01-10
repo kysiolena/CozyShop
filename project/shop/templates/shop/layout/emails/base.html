@@ -16,8 +16,23 @@
     {% end_css_inline %}
 </head>
 <body>
-<div class="px-2 py-4">
-    {% block content %}{% endblock %}
-</div>
+<header class="w-100 mb-4">
+    <nav class="navbar bg-light">
+        <div class="container justify-content-center">
+            {% include 'shop/blocks/logo.html' %}
+        </div>
+    </nav>
+
+    <div class="container position-relative">
+        {% include 'shop/blocks/messages.html' %}
+    </div>
+</header>
+<main class="container">
+    <div class="row">
+        <div class="col-12">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</main>
 </body>
 </html>

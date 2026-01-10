@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+from celery.schedules import crontab
+
 from config.utils import str_to_bool, str_to_int
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,6 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
+
+IS_PRODUCTION = str_to_bool(os.getenv("IS_PRODUCTION"))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = str_to_bool(os.getenv("DEBUG"))
@@ -35,6 +39,8 @@ CSRF_TRUSTED_ORIGINS = (
     if os.getenv("CSRF_TRUSTED_ORIGINS")
     else []
 )
+
+SITE_DOMAIN = os.getenv("SITE_DOMAIN")
 
 # Application definition
 
@@ -53,6 +59,8 @@ INSTALLED_APPS = [
     "comment",
     "cart",
     "order",
+    "channels",
+    "subscribe",
 ]
 
 MIDDLEWARE = [
@@ -78,6 +86,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "cart.context_processors.cart",
+                "subscribe.context_processors.subscribe",
             ],
         },
     },
@@ -162,3 +171,24 @@ EMAIL_PORT = str_to_int(os.getenv("EMAIL_PORT"))
 # PayPal
 PAYPAL_TEST = str_to_bool(os.getenv("PAYPAL_TEST"))
 PAYPAL_RECEIVER_EMAIL = os.getenv("PAYPAL_RECEIVER_EMAIL")
+
+# Celery
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
+
+CELERY_BEAT_SCHEDULE = {
+    "send-daily-emails-at-midnight": {
+        "task": "subscribe.tasks.send_daily_in_stock_report_task",
+        "schedule": crontab(minute=0, hour=19),  # Run every day at 7 pm
+    },
+}
+
+# Channels
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    }
+}
