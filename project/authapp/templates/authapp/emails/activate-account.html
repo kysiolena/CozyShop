@@ -1,4 +1,4 @@
-{% extends 'authapp/emails/base.html' %}
+{% extends 'shop/layout/emails/base.html' %}
 
 {% block title %}Email Confirmation{% endblock %}
 
@@ -9,12 +9,12 @@
 
     <p class="mb-2">Please click on the link below to confirm your registration:</p>
     <a class="btn btn-info"
-       href="http://{{ domain }}{% url 'activate_page' uidb64=uid token=token %}"
+       href="{{ protocol }}://{{ domain }}{% url 'activate_page' uidb64=uid token=token %}"
     >
         Confirm Email
     </a>
     <p class="mt-2">
         Or do nothing if you haven't previously completed the registration form on the
-        <a href="http://{{ domain }}{% url 'shop_page' %}">Cozy Shop</a> website.
+        <a href="{{ protocol }}://{{ domain }}{% url 'shop_page' %}">Cozy Shop</a> website.
     </p>
 {% endblock %}

@@ -1,9 +1,11 @@
 {% load static %}
 
-<a class="navbar-brand" href="{% url 'shop_page' %}">
-    <img src="{% static 'shop/images/logo.png' %}"
+<a class="navbar-brand"
+   href="{% if protocol and domain %}{{ protocol }}://{{ domain }}{% endif %}{% url 'shop_page' %}"
+>
+    <img src="{% if protocol and domain %}{{ protocol }}://{{ domain }}{% endif %}{% static 'shop/images/logo.png' %}"
          alt="Logo"
          height="24"
-         class="d-inline-block align-text-top">
+         class="d-inline-block align-text-top"/>
     Cozy Shop
 </a>
