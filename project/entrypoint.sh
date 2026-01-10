@@ -3,11 +3,10 @@
 # Apply DB migrations
 echo "Applying DB migrations..."
 python manage.py migrate
-python manage.py makemigrations
 
 # Collect Static files
-echo "Collecting static files..."
-python manage.py collectstatic --noinput
+#echo "Collecting static files..."
+#python manage.py collectstatic --noinput
 
 # Execute the CMD from Dockerfile
 exec "$@"

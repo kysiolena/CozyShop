@@ -1,21 +1,21 @@
 services:
-  nginx:
-    image: nginx:latest
-    container_name: nginx-server
-    expose:
-      - 8088
-    ports:
-      - "80:8088"
-    restart: always
-    volumes:
-      - ./project/static:/app/www/cozyshop/static
-      - ./project/media:/app/www/cozyshop/media
-      - ./project/logs:/app/www/cozyshop/logs
-      - ./nginx:/etc/nginx/conf.d
-    networks:
-      - dbnet
-    depends_on:
-      - cozyshop
+  #  nginx:
+  #    image: nginx:latest
+  #    container_name: nginx-server
+  #    expose:
+  #      - 8088
+  #    ports:
+  #      - "80:8088"
+  #    restart: always
+  #    volumes:
+  #      - ./project/static:/app/www/cozyshop/static
+  #      - ./project/media:/app/www/cozyshop/media
+  #      - ./project/logs:/app/www/cozyshop/logs
+  #      - ./nginx:/etc/nginx/conf.d
+  #    networks:
+  #      - dbnet
+  #    depends_on:
+  #      - cozyshop
 
   postgres:
     image: postgres:17-alpine
@@ -47,6 +47,9 @@ services:
       "--log-level", "debug",
       # "--workers", "4",
       "--reload-include", "*.html",
+      "--reload-include", "*.js",
+      "--reload-include", "*.css",
+      "--reload-include", "*.py",
       "--reload",
     ]
     volumes:
