@@ -13,6 +13,8 @@
 9. (Optional) Stop containers `docker compose stop`
 10. (Optional) Stop and remove containers `docker compose down`
 11. (Optional) Start existing containers `docker compose up`
+12. (Optional) Run tests `docker compose exec cozyshop coverage run --source='.' manage.py test`
+13. (Optional) View tests coverage `docker compose exec cozyshop coverage ` + `report` or `html`
 
 ## Checklist
 
@@ -30,4 +32,4 @@
 12. [x] Add Subscription (Celery Beat)
 13. [x] Add InfoPanel (WebSocket, Celery)
 14. [ ] Deploy
-15. [ ] Tests
+15. [x] Tests (Gemini)
