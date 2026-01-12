@@ -72,14 +72,15 @@ COPY --chown=userdj:userdj . .
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Copy entrypoint.sh
-COPY entrypoint.sh .
+# Copy entrypoint.sh to a system path NOT overridden by the volume mount
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-# Add the execute permission to a file entrypoint.sh
-RUN chmod +x ./entrypoint.sh
-
-# Add entrypoint
-ENTRYPOINT ["./entrypoint.sh"]
+# Fix Windows line endings (CRLF) and ensure execution permissions
+RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh && \
+    chmod +x /usr/local/bin/entrypoint.sh
 
 # Switch to non-root user
 USER userdj
+
+# Set the new path as the entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
