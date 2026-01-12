@@ -32,4 +32,4 @@
 12. [x] Add Subscription (Celery Beat)
 13. [x] Add InfoPanel (WebSocket, Celery)
 14. [ ] Deploy
-15. [ ] Tests
+15. [ ] Tests (Gemini)
