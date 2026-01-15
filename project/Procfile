@@ -1,1 +1,1 @@
-web: daphne config.asgi:application -b 0.0.0.0 -p $PORT
+web: python manage.py collectstatic --noinput && python manage.py migrate --noinput && daphne config.asgi:application -b 0.0.0.0 -p $PORT
