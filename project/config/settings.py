@@ -13,8 +13,6 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
-from celery.schedules import crontab
-
 from config.utils import str_to_bool, str_to_int
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -52,6 +50,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_celery_results",
+    "django_celery_beat",
     "django_css_inline",
     "paypal.standard.ipn",
     "shop",
@@ -178,15 +178,7 @@ PAYPAL_RECEIVER_EMAIL = os.getenv("PAYPAL_RECEIVER_EMAIL")
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
 
-CELERY_BEAT_SCHEDULE = {
-    "send-daily-emails-at-midnight": {
-        "task": "subscribe.tasks.send_daily_in_stock_report_task",
-        "schedule": crontab(minute=0, hour=19),  # Run every day at 7 pm
-    },
-}
-
 # Channels
-
 # CHANNEL_LAYERS = {
 #     "default": {
 #         "BACKEND": "channels.layers.InMemoryChannelLayer",

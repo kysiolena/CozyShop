@@ -2,6 +2,8 @@
 
 ## Start project
 
+### Docker
+
 1. Create `.env` file from `.env.example` file
 2. Build `docker compose up --build` containers
 3. (Optional) Migrate `docker compose exec cozyshop python manage.py migrate`
@@ -15,6 +17,17 @@
 11. (Optional) Start existing containers `docker compose up`
 12. (Optional) Run tests `docker compose exec cozyshop coverage run --source='.' manage.py test`
 13. (Optional) View tests coverage `docker compose exec cozyshop coverage ` + `report` or `html`
+
+### OS
+
+1. Create `env.sh` from `env.example.sh`
+2. Run `source env.sh`
+3. Migrate `python manage.py migrate`
+4. Run Server `python manage.py runserver 0.0.0.0:8000`
+5. Run Celery `celery -A config worker -E -l info` (add ` --pool=solo` for Windows)
+6. Run Celery Flower `celery -A config.celery_app flower`
+7. Run Celery Beat `celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler`
+8.
 
 ## Checklist
 

@@ -10,7 +10,7 @@ from django.utils.html import strip_tags
 from subscribe.models import SubscribeProduct
 
 
-@shared_task
+@shared_task(name="daily_in_stock_report_task")
 def send_daily_in_stock_report_task():
     # Get subscriptions where Products have in_stock = True for this moment
     subscriptions = SubscribeProduct.objects.filter(
