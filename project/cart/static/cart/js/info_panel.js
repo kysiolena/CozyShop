@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     socket.addEventListener("message", (e) => {
         // Get HTML alert
         const data = JSON.parse(e.data);
-
+        
         // Create container for HTML alert
         const divEl = document.createElement("div");
 

@@ -1,22 +1,4 @@
 services:
-  #  nginx:
-  #    image: nginx:latest
-  #    container_name: nginx-server
-  #    expose:
-  #      - 8088
-  #    ports:
-  #      - "80:8088"
-  #    restart: always
-  #    volumes:
-  #      - ./project/static:/app/www/cozyshop/static
-  #      - ./project/media:/app/www/cozyshop/media
-  #      - ./project/logs:/app/www/cozyshop/logs
-  #      - ./nginx:/etc/nginx/conf.d
-  #    networks:
-  #      - dbnet
-  #    depends_on:
-  #      - cozyshop
-
   postgres:
     image: postgres:17-alpine
     container_name: psgr
@@ -40,18 +22,7 @@ services:
     ports:
       - "8000:8000"
     restart: always
-    command: [
-      "uvicorn", "config.asgi:application",
-      "--host", "0.0.0.0",
-      "--port", "8000",
-      "--log-level", "debug",
-      # "--workers", "4",
-      "--reload-include", "*.html",
-      "--reload-include", "*.js",
-      "--reload-include", "*.css",
-      "--reload-include", "*.py",
-      "--reload",
-    ]
+    command: "python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./project:/app/www/cozyshop
     env_file:
