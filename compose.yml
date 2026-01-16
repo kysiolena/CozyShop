@@ -75,12 +75,7 @@ services:
     image: celery_cozyshop
     container_name: celery
     restart: always
-    command: [
-      "celery",
-      "--app", "config",
-      "worker",
-      "--loglevel", "info"
-    ]
+    command: "celery -A config worker -E -l info"
     volumes:
       - ./project:/app/www/cozyshop
     env_file:
@@ -98,12 +93,7 @@ services:
     image: celery_beat_cozyshop
     container_name: celery_beat
     restart: always
-    command: [
-      "celery",
-      "--app", "config",
-      "beat",
-      "--loglevel", "info"
-    ]
+    command: "celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
     volumes:
       - ./project:/app/www/cozyshop
     env_file:
