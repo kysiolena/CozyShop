@@ -27,7 +27,6 @@
 5. Run Celery `celery -A config worker -E -l info` (add ` --pool=solo` for Windows)
 6. Run Celery Flower `celery -A config.celery_app flower`
 7. Run Celery Beat `celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler`
-8.
 
 ## Checklist
 
