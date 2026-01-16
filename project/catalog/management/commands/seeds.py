@@ -12,14 +12,11 @@ class Command(BaseCommand):
     help = "This command seeds DB with mock data."
 
     def handle(self, *args, **options):
-        if not settings.IS_PRODUCTION:
-            self.stdout.write("Seeding DB with mock data...")
+        self.stdout.write("Seeding DB with mock data...")
 
-            self.seed_db()
+        self.seed_db()
 
-            self.stdout.write("DB was successfully seeded!")
-        else:
-            self.stdout.write("DB was not seeded in production mode.")
+        self.stdout.write("DB was successfully seeded!")
 
     # Helper functions
     @staticmethod

@@ -35,3 +35,8 @@ export CELERY_RESULT_BACKEND="django-db"
 
 # Cannels
 export CHANNELS_REDIS_URL="redis://default:your_key@tramway.proxy.rlwy.net:your_port/1"
+
+# Admin
+export ADMIN_USERNAME=""
+export ADMIN_EMAIL=""
+export ADMIN_PASSWORD=""
