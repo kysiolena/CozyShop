@@ -1,5 +1,10 @@
 # Cozy Shop
 
+You can visit live version of the project here: [https://app-m2jj.onrender.com/](https://app-m2jj.onrender.com/)
+
+Unfortunately, Celery and Celery Beat can only be viewed on a local version of the project, as the free version of
+Render does not allow the use of deferred tasks.
+
 ## Start project
 
 ### Docker
@@ -43,5 +48,5 @@
 11. [x] Add Comment (model, form, view, template)
 12. [x] Add Subscription (Celery Beat)
 13. [x] Add InfoPanel (WebSocket, Celery)
-14. [ ] Deploy
+14. [x] Deploy
 15. [x] Tests (Gemini)
