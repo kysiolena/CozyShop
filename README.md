@@ -31,7 +31,19 @@ Render does not allow the use of deferred tasks.
 4. Run Server `python manage.py runserver 0.0.0.0:8000`
 5. Run Celery `celery -A config worker -E -l info` (add ` --pool=solo` for Windows)
 6. Run Celery Flower `celery -A config.celery_app flower`
-7. Run Celery Beat `celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler`
+7. Run Celery Beat
+   `celery -A co[README.md](../WeatherBot/README.md)nfig beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler`
+
+## Screenshots
+
+![Home Page](/images/home.png)
+![Catalog Page](/images/catalog.png)
+![Category Page](/images/category.png)
+![Cart Page](/images/cart.png)
+![Checkout Page](/images/checkout.png)
+![Billing Page](/images/billing.png)
+![Order Page](/images/order.png)
+![Message Email Confirmation](/images/message-email-confirmation.png)
 
 ## Checklist
 

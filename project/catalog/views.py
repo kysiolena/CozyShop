@@ -24,7 +24,7 @@ class CatalogView(BaseContextMixin, CategoriesContextMixin, ListView):
     template_name = "catalog/index.html"
     page_name = "Catalog"
     model = Product
-    paginate_by = 9
+    paginate_by = 6
     ordering = "-created_at"
 
     def get_breadcrumbs(self):
